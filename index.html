@@ -1,0 +1,693 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Arbeitszeitblöcke</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Arbeitszeit">
+<meta name="theme-color" content="#F2F5F4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0D1413" media="(prefers-color-scheme: dark)">
+<meta name="robots" content="noindex">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+</head>
+<body>
+<style>
+/* Layout: one-column phone app (max 560px), bottom tab bar, big clock-style numerals for the numbers that matter */
+:root{
+  --bg:#F2F5F4; --surface:#FFFFFF; --surface-2:#E7ECEB; --fg:#14201F; --muted:#5B6967; --line:#D3DBD9;
+  --accent:#0B6E74; --accent-ink:#FFFFFF; --accent-soft:#D6ECEC;
+  --pos:#1D7644; --pos-bg:#DDF1E4; --neg:#B0261E; --neg-bg:#FBE2DF; --info:#7A5200; --info-bg:#FBEFD5;
+  --font-num:-apple-system,"SF Pro Display",system-ui,"Segoe UI",Roboto,sans-serif;
+  --font-body:-apple-system,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0D1413; --surface:#161F1E; --surface-2:#1F2A29; --fg:#E4ECEA; --muted:#94A4A1; --line:#2A3735;
+  --accent:#52C3C6; --accent-ink:#052022; --accent-soft:#16393A;
+  --pos:#62CC8F; --pos-bg:#123020; --neg:#FF8C82; --neg-bg:#3B1714; --info:#F1BA5E; --info-bg:#35280F; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0D1413; --surface:#161F1E; --surface-2:#1F2A29; --fg:#E4ECEA; --muted:#94A4A1; --line:#2A3735;
+  --accent:#52C3C6; --accent-ink:#052022; --accent-soft:#16393A;
+  --pos:#62CC8F; --pos-bg:#123020; --neg:#FF8C82; --neg-bg:#3B1714; --info:#F1BA5E; --info-bg:#35280F; color-scheme:dark}
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--font-body);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
+[hidden]{display:none!important}
+html,body{margin:0}
+.app{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:calc(12px + env(safe-area-inset-top,0px)) calc(92px + env(safe-area-inset-bottom,0px))}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.num{font-family:var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
+.muted{color:var(--muted)}
+.label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.view{display:grid;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.sync{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
+.dot.ok{background:var(--pos)} .dot.err{background:var(--neg)} .dot.local{background:var(--info)}
+
+/* date nav */
+.datenav{display:flex;align-items:center;gap:8px}
+.datenav h1{flex:1;min-width:0;margin:0;font-family:var(--font-num);font-weight:600;font-size:24px;line-height:1.1;text-wrap:balance}
+.datenav h1 small{display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
+.iconbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:20px;line-height:1}
+.pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
+
+/* hero */
+.hero{background:var(--accent);color:var(--accent-ink);border:0;display:grid;gap:4px;padding:16px 16px 14px}
+.hero .label{color:inherit;opacity:.8}
+.hero .big{font-family:var(--font-num);font-weight:700;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
+.hero .sub{font-size:15px;opacity:.9}
+.hero .row{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--accent-ink) 25%,transparent);font-size:15px}
+.hero .row b{font-family:var(--font-num);font-size:18px}
+.wish{display:flex;align-items:center;gap:8px;margin-top:6px}
+.wish button{width:34px;height:30px;border-radius:9px;border:1px solid color-mix(in srgb,var(--accent-ink) 40%,transparent);background:transparent;color:inherit;font-size:18px;line-height:1}
+.wish .num{font-size:18px;min-width:52px;text-align:center}
+
+.stamp{width:100%;border:0;border-radius:var(--r);padding:16px;background:var(--fg);color:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-weight:700;font-size:20px}
+.stamp .num{font-size:26px}
+.stamp:active{transform:scale(.99)}
+
+/* segmented */
+.seg{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface-2);border-radius:12px;padding:3px;gap:3px}
+.seg button{border:0;background:transparent;border-radius:9px;padding:8px 2px;font-size:14px;font-weight:600;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.holiday{font-size:14px;font-weight:600;color:var(--info);background:var(--info-bg);border-radius:10px;padding:8px 10px}
+
+/* blocks */
+.blocks{display:grid;gap:8px}
+.brow{display:grid;grid-template-columns:auto 1fr auto 1fr auto;align-items:center;gap:8px}
+.brow .n{font-size:13px;font-weight:600;color:var(--muted);width:18px}
+.brow input[type=time]{width:100%;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 6px;font-family:var(--font-num);font-size:20px;text-align:center;-webkit-appearance:none;appearance:none;min-height:44px}
+.brow.bad input{border-color:var(--neg)}
+.brow .dash{color:var(--muted)}
+.brow .del{width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-size:20px}
+.gap{font-size:13px;color:var(--muted);padding-left:26px}
+.addb{border:1px dashed var(--line);background:transparent;border-radius:10px;padding:10px;font-weight:600;color:var(--accent)}
+.line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px}
+.line + .line{border-top:1px solid var(--line)}
+.switch{position:relative;width:48px;height:28px;flex:none}
+.switch input{opacity:0;width:100%;height:100%;margin:0;position:absolute;inset:0;cursor:pointer}
+.switch span{position:absolute;inset:0;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);transition:background .15s}
+.switch span::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
+.switch input:checked + span{background:var(--accent);border-color:var(--accent)}
+.switch input:checked + span::after{transform:translateX(20px)}
+.step{display:flex;align-items:center;gap:6px}
+.step button{width:34px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--surface)}
+.note{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 10px}
+
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.stat{display:grid;gap:2px}
+.stat .v{font-family:var(--font-num);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.pos{color:var(--pos)} .neg{color:var(--neg)}
+.chip{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px}
+.chip.pos{background:var(--pos-bg);color:var(--pos)} .chip.neg{background:var(--neg-bg);color:var(--neg)} .chip.info{background:var(--info-bg);color:var(--info)} .chip.plain{background:var(--surface-2);color:var(--muted)}
+.konto{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;align-items:end}
+.konto .v{font-family:var(--font-num);font-size:24px;font-weight:600}
+.konto .v.xl{font-size:34px}
+.sechead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+
+/* Verlauf */
+.month{padding:0;overflow:hidden}
+.mhead{padding:12px 14px;background:var(--surface-2);display:grid;gap:6px}
+.mhead h2{margin:0;font-family:var(--font-num);font-weight:600;font-size:22px}
+.mstats{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:14px;color:var(--muted)}
+.mstats b{color:var(--fg);font-family:var(--font-num);font-size:16px}
+.mstats b.neg{color:var(--neg)} .mstats b.pos{color:var(--pos)} .nw{white-space:nowrap}
+.drow{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 14px;border-top:1px solid var(--line);width:100%;text-align:left;background:transparent;border-left:0;border-right:0;border-bottom:0}
+.drow:first-of-type{border-top:0}
+.drow .d{font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.drow .t{font-size:13px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
+.drow .r{text-align:right;font-family:var(--font-num);font-size:18px;font-variant-numeric:tabular-nums}
+.drow .s{text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.drow.today{background:var(--accent-soft)}
+.drow.missing .d{color:var(--muted);font-weight:400}
+
+/* Einstellungen */
+.field{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.field:first-of-type{border-top:0}
+.field small{display:block;color:var(--muted);font-size:13px}
+.field input[type=time],.field input[type=date],.field input[type=number],.field select{border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px;min-height:40px;font-family:var(--font-num);font-size:18px;max-width:150px}
+.field input[type=number]{width:72px;text-align:right}
+.saldoin{display:flex;gap:6px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-weight:600}
+.btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.help{font-size:14px;color:var(--muted);display:grid;gap:6px}
+.help p{margin:0}
+
+/* tab bar */
+.tabbar{position:fixed;left:0;right:0;bottom:0;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);padding:6px 16px calc(6px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;z-index:5}
+.tabbar .in{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:560px}
+.tabbar button{border:0;background:transparent;border-radius:10px;padding:8px 4px;font-weight:600;font-size:14px;color:var(--muted);display:grid;justify-items:center;gap:2px}
+.tabbar button svg{width:22px;height:22px}
+.tabbar button[aria-current="page"]{color:var(--accent)}
+.banner{font-size:14px;background:var(--info-bg);color:var(--info);border-radius:10px;padding:10px 12px}
+@media (max-width:380px){.hero .big{font-size:54px}.stat .v{font-size:21px}.seg button{font-size:13px}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<div class="app">
+  <div id="banner" class="banner" hidden></div>
+
+  <!-- HEUTE -->
+  <section id="v-heute" class="view" aria-label="Tag">
+    <div class="datenav">
+      <button class="iconbtn" id="prev" aria-label="Vorheriger Tag">‹</button>
+      <h1 id="dtitle">–</h1>
+      <button class="iconbtn" id="next" aria-label="Nächster Tag">›</button>
+      <button class="pill" id="todayBtn">Heute</button>
+    </div>
+
+    <div class="card hero" id="hero">
+      <div class="label" id="heroLabel">Lade deine Zeiten …</div>
+      <div class="big" id="heroBig">–</div>
+      <div class="sub" id="heroSub"></div>
+      <div class="wish" id="wishRow">
+        <span>Wunsch-Plus</span>
+        <button id="wishMinus" aria-label="Wunsch-Plus verringern">−</button>
+        <span class="num" id="wishVal">+0:00</span>
+        <button id="wishPlus" aria-label="Wunsch-Plus erhöhen">+</button>
+      </div>
+      <div class="row" id="heroRow"></div>
+    </div>
+
+    <button class="stamp" id="stamp" hidden><span id="stampLabel">Kommen</span><span class="num" id="stampTime">--:--</span></button>
+
+    <div class="card" style="display:grid;gap:12px">
+      <div id="holiday" class="holiday" hidden></div>
+      <div class="seg" role="group" aria-label="Art des Tages" id="seg">
+        <button data-art="Arbeit">Arbeit</button><button data-art="TAZ">TAZ</button><button data-art="Urlaub">Urlaub</button><button data-art="Krank">Krank</button><button data-art="Frei">Frei</button>
+      </div>
+      <div>
+        <div class="sechead"><span class="label">Zeitblöcke</span><span id="checkChip"></span></div>
+        <div class="blocks" id="blocks"></div>
+      </div>
+      <div>
+        <div class="line">
+          <span>Externer Termin <span class="muted">(Wegezeit)</span></span>
+          <label class="switch"><input type="checkbox" id="extern" aria-label="Externer Termin"><span></span></label>
+        </div>
+        <div class="line" id="wegeRow" hidden>
+          <span class="muted">Wegezeit</span>
+          <div class="step"><button id="wegeMinus" aria-label="5 Minuten weniger">−</button><span class="num" id="wegeVal" style="min-width:44px;text-align:center;font-size:18px">0:10</span><button id="wegePlus" aria-label="5 Minuten mehr">+</button></div>
+        </div>
+      </div>
+      <input class="note" id="note" type="text" placeholder="Notiz (optional)" autocomplete="off">
+    </div>
+
+    <div class="card">
+      <div class="stats">
+        <div class="stat"><span class="label">Ist</span><span class="v" id="sIst">–</span></div>
+        <div class="stat"><span class="label">Soll</span><span class="v" id="sSoll">–</span></div>
+        <div class="stat"><span class="label">Pausen</span><span class="v" id="sPause">–</span></div>
+        <div class="stat"><span class="label">Diff</span><span class="v" id="sDiff">–</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="sechead"><span class="label">Gleitzeitkonto</span><span class="muted" style="font-size:13px" id="kontoStand"></span></div>
+      <div class="konto">
+        <div><div class="label">Saldo</div><div class="v xl" id="kSaldo">–</div></div>
+        <div><div class="label">TAZ möglich</div><div class="v" id="kTaz">–</div></div>
+        <div><div class="label">Rest</div><div class="v" id="kRest">–</div></div>
+      </div>
+      <div class="muted" style="font-size:14px;margin-top:8px" id="kTazYear"></div>
+    </div>
+  </section>
+
+  <!-- VERLAUF -->
+  <section id="v-verlauf" class="view" aria-label="Verlauf" hidden>
+    <div class="datenav"><h1>Verlauf<small>Tippe auf einen Tag, um ihn zu bearbeiten</small></h1></div>
+    <div id="months" class="view"></div>
+  </section>
+
+  <!-- EINSTELLUNGEN -->
+  <section id="v-set" class="view" aria-label="Einstellungen" hidden>
+    <div class="datenav"><h1>Einstellungen<small id="syncText" class="sync"><span class="dot" id="syncDot"></span><span id="syncLabel">Verbinde …</span></small></h1></div>
+    <div class="card">
+      <div class="field"><label for="cSoll">Sollzeit pro Tag</label><input type="time" id="cSoll"></div>
+      <div class="field"><label for="cWege">Wegezeit Standard <small>Minuten, wenn „Externer Termin“ an ist</small></label><input type="number" id="cWege" min="0" max="240" inputmode="numeric"></div>
+      <div class="field"><label>Startsaldo <small>Gleitzeitkonto am Stichtag</small></label>
+        <div class="saldoin"><select id="cSign" aria-label="Vorzeichen"><option value="1">+</option><option value="-1">−</option></select><input type="number" id="cSH" min="0" max="999" inputmode="numeric" aria-label="Stunden" style="width:64px"><span>:</span><input type="number" id="cSM" min="0" max="59" inputmode="numeric" aria-label="Minuten" style="width:56px"></div></div>
+      <div class="field"><label for="cStich">Stichtag <small>Saldo gilt am Ende dieses Tages</small></label><input type="date" id="cStich"></div>
+      <div class="field"><label for="cTaz">TAZ im Startjahr schon genommen</label><input type="number" id="cTaz" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label for="cFrei">Heiligabend &amp; Silvester frei</label><label class="switch"><input type="checkbox" id="cFrei"><span></span></label></div>
+    </div>
+    <div class="card help">
+      <p><b style="color:var(--fg)">So rechnet die App</b></p>
+      <p>Die Lücken zwischen deinen Blöcken sind Pausen. Nach Arbeitszeitgesetz zählen nur Pausen ab 15 Minuten: über 6 h braucht es 30 min, über 9 h 45 min, maximal 10 h am Tag.</p>
+      <p>TAZ zieht die Sollzeit vom Konto ab. Urlaub, Krank, Frei und Feiertage (Hessen, automatisch) sind neutral.</p>
+      <p>„Gehen um“ erscheint, sobald ein Block gestartet, aber noch nicht beendet ist, und enthält fehlende Pflichtpausen.</p>
+    </div>
+    <div class="card" style="display:grid;gap:10px">
+      <span class="label">Sicherung</span>
+      <button class="btn" id="csvBtn">Alle Tage als CSV kopieren</button>
+      <span class="muted" style="font-size:14px" id="csvMsg">Zum Einfügen in Excel.</span>
+      <textarea id="csvOut" hidden readonly style="width:100%;min-height:120px;font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px"></textarea>
+      <button class="btn" id="expBtn">Sicherung speichern (JSON)</button>
+      <label class="btn" for="impFile" style="text-align:center">Sicherung wiederherstellen …</label>
+      <input type="file" id="impFile" accept=".json,application/json" hidden>
+      <span class="muted" style="font-size:14px" id="bakMsg">Deine Daten liegen nur auf diesem Gerät. Speichere ab und zu eine Sicherung, z. B. in iCloud Drive.</span>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar" aria-label="Bereiche"><div class="in">
+  <button data-tab="heute" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Tag</button>
+  <button data-tab="verlauf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Verlauf</button>
+  <button data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Einstellungen</button>
+</div></nav>
+
+<script>
+(function(){
+"use strict";
+try { document.documentElement.lang = "de"; } catch(e){}
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const pad = n => String(n).padStart(2,"0");
+const iso = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const parseISO = s => { const [y,m,d] = s.split("-").map(Number); return new Date(y,m-1,d); };
+const addDays = (s,n) => { const d = parseISO(s); d.setDate(d.getDate()+n); return iso(d); };
+const toMin = t => { if(!t) return null; const m = /^(\d{1,2}):(\d{2})/.exec(t); return m ? (+m[1])*60 + (+m[2]) : null; };
+const dur = m => { m = Math.round(Math.abs(m)); return Math.floor(m/60)+":"+pad(m%60); };
+const signed = m => (m < 0 ? "−" : "+") + dur(m);
+const clock = m => { m = ((Math.round(m)%1440)+1440)%1440; return pad(Math.floor(m/60))+":"+pad(m%60); };
+const nowMin = () => { const d = new Date(); return d.getHours()*60 + d.getMinutes(); };
+const todayISO = () => iso(new Date());
+const WD = ["So","Mo","Di","Mi","Do","Fr","Sa"];
+const WDL = ["Sonntag","Montag","Dienstag","Mittwoch","Donnerstag","Freitag","Samstag"];
+const MON = ["Januar","Februar","März","April","Mai","Juni","Juli","August","September","Oktober","November","Dezember"];
+const dmy = s => s.slice(8,10)+"."+s.slice(5,7)+".";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ls = { get(k){ try { return JSON.parse(localStorage.getItem(k)); } catch(e){ return null; } },
+             set(k,v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} } };
+
+/* ---------- Feiertage Hessen ---------- */
+function easter(y){ const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1; return new Date(y,mo-1,da); }
+const holCache = {};
+function holidays(y){
+  if(holCache[y]) return holCache[y];
+  const e = easter(y), off = n => { const d = new Date(e); d.setDate(d.getDate()+n); return iso(d); };
+  const m = {};
+  m[y+"-01-01"]="Neujahr"; m[off(-2)]="Karfreitag"; m[off(1)]="Ostermontag"; m[y+"-05-01"]="Tag der Arbeit";
+  m[off(39)]="Christi Himmelfahrt"; m[off(50)]="Pfingstmontag"; m[off(60)]="Fronleichnam";
+  m[y+"-10-03"]="Tag der Deutschen Einheit"; m[y+"-12-25"]="1. Weihnachtstag"; m[y+"-12-26"]="2. Weihnachtstag";
+  return holCache[y] = m;
+}
+function holidayName(ds){
+  const h = holidays(+ds.slice(0,4))[ds]; if(h) return h;
+  if(S.cfg.frei2412){ if(ds.endsWith("-12-24")) return "Heiligabend"; if(ds.endsWith("-12-31")) return "Silvester"; }
+  return null;
+}
+
+/* ---------- state ---------- */
+const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, frei2412:false, max:600 };
+const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), tab:"heute", mode:"loading", dirty:new Set(), cfgDirty:false };
+let db = null; const ver = {}, timers = {}, saving = {}; let cfgTimer = null, cfgSaving = null;
+
+const getDay = ds => (S.months[ds.slice(0,7)]||{})[ds] || null;
+function allDates(){ const out=[]; for(const k in S.months) for(const ds in S.months[k]) out.push(ds); return out.sort(); }
+
+/* ---------- Rechenkern ---------- */
+function compute(ds, live){
+  const day = getDay(ds) || {};
+  const b = (day.b||[]).map(x => [toMin(x[0]), toMin(x[1])]);
+  let closed=0, pauses=0, maxBlock=0, open=null, prevEnd=null, any=false;
+  b.forEach(([s,e], i) => {
+    if(s!=null || e!=null) any = true;
+    if(s!=null && e!=null && e>s){ closed += e-s; maxBlock = Math.max(maxBlock, e-s); }
+    if(s!=null && e==null) open = s;
+    if(i>0 && s!=null && prevEnd!=null){ const g = s-prevEnd; if(g >= 15) pauses += g; }
+    prevEnd = e;
+  });
+  const wege = day.w || 0;
+  const wd = parseISO(ds).getDay(), weekend = wd===0 || wd===6;
+  const hol = holidayName(ds);
+  const typ = hol ? "Feiertag" : (day.art || "Arbeit");
+  const neutral = ["Urlaub","Krank","Feiertag","Frei"].includes(typ);
+  const soll = (weekend || neutral) ? 0 : S.cfg.soll;
+  const ist = closed + wege;
+  const counted = typ !== "Arbeit" || any || wege > 0;
+  const diff = counted ? ist - soll : null;
+  let liveIst = ist;
+  if(live && open!=null) liveIst += Math.max(0, nowMin()-open);
+  let check=null, level=null;
+  if(any){
+    if(ist > S.cfg.max){ check="über 10 h"; level="neg"; }
+    else if(ist > 540 && pauses < 45){ check="Pause < 45 min"; level="neg"; }
+    else if(ist > 360 && pauses < 30){ check="Pause < 30 min"; level="neg"; }
+    else if(maxBlock > 360){ check="> 6 h am Stück"; level="neg"; }
+    else if(open!=null){ check="läuft"; level="info"; }
+    else { check="OK"; level="pos"; }
+  }
+  return { day, b, closed, pauses, maxBlock, open, wege, typ, hol, weekend, soll, ist, counted, diff, liveIst, check, level, any };
+}
+function inRange(ds){ return !S.cfg.stichtag || ds > S.cfg.stichtag; }
+function saldoBis(ds){
+  let s = S.cfg.startSaldo;
+  for(const x of allDates()){ if(x > ds) break; if(!inRange(x)) continue; const c = compute(x); if(c.diff!=null) s += c.diff; }
+  return s;
+}
+const needPause = t => t > 540 ? 45 : t > 360 ? 30 : 0;
+
+/* ---------- speichern ---------- */
+function setSync(kind, text){
+  $("syncDot").className = "dot " + (kind||"");
+  $("syncLabel").textContent = text;
+}
+function mutateDay(ds, fn){
+  const k = ds.slice(0,7);
+  const month = { ...(S.months[k]||{}) };
+  const day = JSON.parse(JSON.stringify(month[ds] || {}));
+  if(!day.b) day.b = [];
+  fn(day);
+  const empty = !day.b.length && !day.art && !day.w && !day.n;
+  if(!day.b.length) delete day.b;
+  if(empty) delete month[ds]; else month[ds] = day;
+  S.months[k] = month;
+  ver[k] = (ver[k]||0) + 1; S.dirty.add(k);
+  if(!db){ S.dirty.delete(k); ls.set("azb.local", {months:S.months, cfg:S.cfg}); }
+  else { clearTimeout(timers[k]); timers[k] = setTimeout(() => flushMonth(k), 450); }
+  render();
+}
+async function flushMonth(k){
+  if(!db){ S.dirty.delete(k); ls.set("azb.local", {months:S.months, cfg:S.cfg}); return; }
+  while(saving[k]) await saving[k];
+  const v = ver[k];
+  setSync("", "Speichere …");
+  saving[k] = db.doc("months/"+k).set({ days: S.months[k] || {} })
+    .then(() => { if(ver[k] === v) S.dirty.delete(k); setSync("ok", "Gespeichert in deinem Claude-Konto"); })
+    .catch(e => { setSync("err", "Speichern fehlgeschlagen – bitte neu laden"); showBanner("Deine letzte Änderung konnte nicht gespeichert werden. Lade die Seite neu und prüfe den Tag."); })
+    .finally(() => { saving[k] = null; });
+  await saving[k];
+}
+function mutateCfg(patch){
+  S.cfg = { ...S.cfg, ...patch }; S.cfgDirty = true;
+  if(!db){ S.cfgDirty = false; ls.set("azb.local", {months:S.months, cfg:S.cfg}); }
+  else { clearTimeout(cfgTimer); cfgTimer = setTimeout(flushCfg, 500); }
+  render();
+}
+async function flushCfg(){
+  if(!db){ S.cfgDirty = false; ls.set("azb.local", {months:S.months, cfg:S.cfg}); return; }
+  while(cfgSaving) await cfgSaving;
+  const snap = { ...S.cfg };
+  cfgSaving = db.doc("config/main").set(snap)
+    .then(() => { if(JSON.stringify(snap) === JSON.stringify(S.cfg)) S.cfgDirty = false; setSync("ok", "Gespeichert in deinem Claude-Konto"); })
+    .catch(() => setSync("err", "Speichern fehlgeschlagen – bitte neu laden"))
+    .finally(() => { cfgSaving = null; });
+  await cfgSaving;
+}
+function showBanner(t){ const b = $("banner"); b.textContent = t; b.hidden = !t; }
+
+/* ---------- render: Tag ---------- */
+function renderHeute(full){
+  const ds = S.date, today = todayISO(), isToday = ds === today;
+  const d = parseISO(ds);
+  $("dtitle").innerHTML = esc(dmy(ds)+d.getFullYear()) + "<small>"+ esc(isToday ? "Heute · "+WDL[d.getDay()] : WDL[d.getDay()]) +"</small>";
+  $("todayBtn").hidden = isToday;
+  const c = compute(ds, isToday);
+  const liveOpen = isToday && c.open != null;
+  const saldo = liveOpen ? saldoBis(addDays(ds, -1)) + (inRange(ds) ? c.liveIst - c.soll : 0) : saldoBis(ds);
+
+  /* hero */
+  const target = c.soll + S.wish;
+  let label="", big="–", sub="", rows=[];
+  $("wishVal").textContent = signed(S.wish);
+  const showWish = c.soll > 0 && (c.open!=null || (!c.any && isToday));
+  $("wishRow").hidden = !showWish;
+  if(S.mode === "loading"){ label = "Lade deine Zeiten …"; }
+  else if(c.open!=null){
+    const extra = Math.max(0, needPause(target) - c.pauses);
+    const at = c.open + Math.max(0, target - c.ist) + extra;
+    const latest = c.open + Math.max(0, S.cfg.max - c.ist) + Math.max(0, 45 - c.pauses);
+    label = S.wish ? "Gehen für Soll " + signed(S.wish) : "Gehen um (Soll erreicht)";
+    big = c.soll === 0 && !S.wish ? "–" : clock(at);
+    sub = extra > 0 ? "inkl. " + extra + " min Pause, die dir noch fehlt" : "Pausen sind ausreichend";
+    if(Math.max(0, target - c.ist) > 360) sub += " · Achtung: laufender Block wäre länger als 6 h";
+    rows.push("<span class=\"nw\">Spätestens (10 h) <b>" + clock(latest) + "</b></span>");
+    if(isToday) rows.push("<span class=\"nw\">Stand jetzt <b>" + dur(c.liveIst) + "</b> (" + signed(c.liveIst - c.soll) + ")</span>");
+  } else if(c.soll === 0 && !c.any){
+    label = c.hol ? "Feiertag" : c.weekend ? "Wochenende" : c.typ;
+    big = c.typ === "Arbeit" || c.typ === "Feiertag" ? "Frei" : c.typ;
+    sub = c.hol || "Kein Soll an diesem Tag";
+  } else if(!c.any && c.typ === "TAZ"){
+    label = "Gleittag (TAZ)"; big = signed(c.diff); sub = "Sollzeit wird vom Konto abgezogen";
+  } else if(!c.any){
+    if(isToday){
+      const at = nowMin() + target + needPause(target);
+      label = "Wenn du jetzt kommst"; big = clock(at); sub = "Gehen um, inkl. " + needPause(target) + " min Pause";
+    } else { label = "Noch keine Zeiten"; big = "–"; sub = "Trag deine Blöcke unten ein"; }
+  } else {
+    label = "Diff an diesem Tag"; big = signed(c.diff);
+    sub = "Ist " + dur(c.ist) + " von " + dur(c.soll) + " Soll";
+  }
+  $("heroLabel").textContent = label; $("heroBig").textContent = big; $("heroSub").textContent = sub;
+  $("heroRow").innerHTML = rows.join(""); $("heroRow").hidden = !rows.length;
+
+  /* stamp */
+  const st = $("stamp");
+  st.hidden = !isToday || S.mode === "loading";
+  $("stampLabel").textContent = c.open!=null ? "Gehen / Pause" : "Kommen";
+  $("stampTime").textContent = clock(nowMin());
+
+  /* art + holiday */
+  $("holiday").hidden = !c.hol; $("holiday").textContent = c.hol ? "Feiertag: " + c.hol + " (neutral, Soll 0)" : "";
+  document.querySelectorAll("#seg button").forEach(btn => btn.setAttribute("aria-pressed", String((c.day.art||"Arbeit") === btn.dataset.art)));
+
+  /* blocks – nicht neu bauen, während ein Feld bearbeitet wird */
+  const bl = $("blocks");
+  if(full !== false && !bl.contains(document.activeElement)){
+    const raw = c.day.b || [];
+    let html = "";
+    raw.forEach((x, i) => {
+      if(i > 0){
+        const pe = toMin(raw[i-1][1]), s = toMin(x[0]);
+        if(pe!=null && s!=null) html += '<div class="gap">Pause ' + dur(Math.max(0, s-pe)) + (s-pe < 15 && s-pe > 0 ? " (zählt nicht, < 15 min)" : "") + "</div>";
+      }
+      const s = toMin(x[0]), e = toMin(x[1]);
+      const bad = s!=null && e!=null && e <= s;
+      html += '<div class="brow'+(bad?" bad":"")+'"><span class="n">'+(i+1)+'</span>'+
+        '<input type="time" id="b'+i+'s" data-i="'+i+'" data-k="0" value="'+esc(x[0]||"")+'" aria-label="Block '+(i+1)+' Start">'+
+        '<span class="dash">–</span>'+
+        '<input type="time" id="b'+i+'e" data-i="'+i+'" data-k="1" value="'+esc(x[1]||"")+'" aria-label="Block '+(i+1)+' Ende">'+
+        '<button class="del" data-del="'+i+'" aria-label="Block '+(i+1)+' löschen">×</button></div>';
+    });
+    html += '<button class="addb" id="addBlock">+ Block hinzufügen</button>';
+    bl.innerHTML = html;
+  }
+  $("checkChip").innerHTML = c.check ? '<span class="chip '+c.level+'">'+esc(c.check)+'</span>' : "";
+
+  /* extern */
+  $("extern").checked = c.wege > 0; $("wegeRow").hidden = !(c.wege > 0); $("wegeVal").textContent = dur(c.wege);
+  if(document.activeElement !== $("note")) $("note").value = c.day.n || "";
+
+  /* stats */
+  $("sIst").textContent = dur(isToday ? c.liveIst : c.ist);
+  $("sSoll").textContent = dur(c.soll);
+  $("sPause").textContent = dur(c.pauses);
+  const dd = c.diff == null ? null : (isToday && c.open!=null ? c.liveIst - c.soll : c.diff);
+  $("sDiff").textContent = dd == null ? "–" : signed(dd);
+  $("sDiff").className = "v " + (dd == null ? "" : dd < 0 ? "neg" : "pos");
+
+  /* konto */
+  $("kontoStand").textContent = liveOpen ? "Stand jetzt, inkl. laufendem Block" : "Stand " + dmy(ds) + (c.open!=null ? ", ohne offenen Block" : "");
+  $("kSaldo").textContent = signed(saldo); $("kSaldo").className = "v xl " + (saldo < 0 ? "neg" : "");
+  const taz = saldo > 0 ? Math.floor(saldo / S.cfg.soll) : 0;
+  $("kTaz").textContent = String(taz);
+  $("kRest").textContent = saldo > 0 ? dur(saldo - taz * S.cfg.soll) : "–";
+  const y = ds.slice(0,4);
+  let tazYear = allDates().filter(x => x.startsWith(y) && x <= ds && compute(x).typ === "TAZ" && inRange(x)).length;
+  if(S.cfg.stichtag && S.cfg.stichtag.startsWith(y)) tazYear += (S.cfg.tazVorher || 0);
+  $("kTazYear").textContent = "TAZ genommen " + y + ": " + tazYear + (tazYear === 1 ? " Tag" : " Tage");
+}
+
+/* ---------- render: Verlauf ---------- */
+function renderVerlauf(){
+  const today = todayISO();
+  const set = new Set(allDates().filter(inRange));
+  let start = S.cfg.stichtag ? addDays(S.cfg.stichtag, 1) : ([...set][0] || today);
+  if(start < addDays(today, -800)) start = addDays(today, -800);
+  for(let d = start; d <= today; d = addDays(d, 1)){ const w = parseISO(d).getDay(); if(w !== 0 && w !== 6) set.add(d); }
+  const dates = [...set].sort();
+  let s = S.cfg.startSaldo;
+  const rows = dates.map(d => { const c = compute(d); if(c.diff != null) s += c.diff; return { d, c, s }; });
+  const groups = {};
+  rows.forEach(r => { const k = r.d.slice(0,7); (groups[k] = groups[k] || []).push(r); });
+  const keys = Object.keys(groups).sort().reverse();
+  if(!keys.length){ $("months").innerHTML = '<div class="card muted">Noch keine Tage erfasst. Stempel auf der Seite „Tag“ ein oder trag deine Blöcke dort ein.</div>'; return; }
+  $("months").innerHTML = keys.map(k => {
+    const g = groups[k];
+    let ist=0, soll=0, diff=0, taz=0, url=0, kr=0;
+    g.forEach(r => { if(r.c.diff != null){ ist += r.c.ist; soll += r.c.soll; diff += r.c.diff; }
+      if(r.c.typ === "TAZ") taz++; if(r.c.typ === "Urlaub") url++; if(r.c.typ === "Krank") kr++; });
+    const end = g[g.length-1].s;
+    const head = '<div class="mhead"><h2>' + MON[+k.slice(5,7)-1] + " " + k.slice(0,4) + '</h2><div class="mstats">' +
+      '<span>Ist <b>'+dur(ist)+'</b></span><span>Soll <b>'+dur(soll)+'</b></span>' +
+      '<span>Diff <b class="'+(diff<0?"neg":"pos")+'">'+signed(diff)+'</b></span><span>Saldo <b>'+signed(end)+'</b></span>' +
+      (taz ? '<span>TAZ <b>'+taz+'</b></span>' : "") + (url ? '<span>Urlaub <b>'+url+'</b></span>' : "") + (kr ? '<span>Krank <b>'+kr+'</b></span>' : "") +
+      '</div></div>';
+    const body = g.slice().reverse().map(r => {
+      const c = r.c, wd = WD[parseISO(r.d).getDay()];
+      const times = (c.day.b||[]).map(x => (x[0]||"?") + "–" + (x[1]||"…")).join(" · ");
+      const missing = c.diff == null;
+      let chip = "";
+      if(c.typ !== "Arbeit") chip = '<span class="chip '+(c.typ==="TAZ"?"info":"plain")+'">'+esc(c.hol||c.typ)+'</span>';
+      if(c.level === "neg") chip += '<span class="chip neg">'+esc(c.check)+'</span>';
+      if(c.open != null) chip += '<span class="chip info">läuft</span>';
+      const t = [times, c.wege ? "Wegezeit " + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
+      return '<button class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+'" data-go="'+r.d+'">' +
+        '<span class="d">'+wd+" "+dmy(r.d)+chip+'</span>' +
+        '<span class="r '+(missing?"muted":(c.diff<0?"neg":"pos"))+'">'+(missing?"–":signed(c.diff))+'</span>' +
+        '<span class="t">'+(missing ? (r.d < today ? "keine Einträge" : "") : (t || dur(c.ist)))+'</span>' +
+        '<span class="s">'+(missing?"":"Saldo "+signed(r.s))+'</span></button>';
+    }).join("");
+    return '<div class="card month">' + head + body + '</div>';
+  }).join("");
+}
+
+/* ---------- render: Einstellungen ---------- */
+function renderSet(){
+  const c = S.cfg, act = document.activeElement;
+  const put = (id, v) => { if(act !== $(id)) $(id).value = v; };
+  put("cSoll", clock(c.soll)); put("cWege", c.wege);
+  put("cSign", c.startSaldo < 0 ? "-1" : "1");
+  put("cSH", Math.floor(Math.abs(c.startSaldo)/60)); put("cSM", pad(Math.abs(c.startSaldo)%60));
+  put("cStich", c.stichtag || ""); put("cTaz", c.tazVorher || 0);
+  $("cFrei").checked = !!c.frei2412;
+}
+
+function render(full){
+  if(S.tab === "heute") renderHeute(full);
+  if(S.tab === "verlauf" && full !== false) renderVerlauf();
+  if(S.tab === "set") renderSet();
+}
+
+/* ---------- events ---------- */
+function go(tab){
+  S.tab = tab;
+  ["heute","verlauf","set"].forEach(t => { $("v-"+t).hidden = t !== tab; });
+  document.querySelectorAll(".tabbar button").forEach(b => { if(b.dataset.tab === tab) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
+  render(); window.scrollTo(0,0);
+}
+document.querySelectorAll(".tabbar button").forEach(b => b.addEventListener("click", () => go(b.dataset.tab)));
+$("prev").onclick = () => { S.date = addDays(S.date, -1); render(); };
+$("next").onclick = () => { S.date = addDays(S.date, 1); render(); };
+$("todayBtn").onclick = () => { S.date = todayISO(); render(); };
+$("wishMinus").onclick = () => { S.wish -= 15; ls.set("azb.wish", S.wish); render(false); };
+$("wishPlus").onclick = () => { S.wish += 15; ls.set("azb.wish", S.wish); render(false); };
+
+$("stamp").onclick = () => {
+  const t = clock(nowMin()), c = compute(S.date);
+  mutateDay(S.date, day => {
+    const i = day.b.findIndex(x => x[0] && !x[1]);
+    if(c.open != null && i >= 0) day.b[i][1] = t;
+    else { const empty = day.b.findIndex(x => !x[0] && !x[1]); if(empty >= 0) day.b[empty] = [t, ""]; else day.b.push([t, ""]); }
+  });
+};
+$("seg").addEventListener("click", e => {
+  const b = e.target.closest("button[data-art]"); if(!b) return;
+  mutateDay(S.date, day => { if(b.dataset.art === "Arbeit") delete day.art; else day.art = b.dataset.art; });
+});
+$("blocks").addEventListener("change", e => {
+  const inp = e.target; if(inp.dataset.i == null) return;
+  const i = +inp.dataset.i, k = +inp.dataset.k, v = inp.value || "";
+  mutateDay(S.date, day => { while(day.b.length <= i) day.b.push(["",""]); day.b[i][k] = v; });
+});
+$("blocks").addEventListener("focusout", () => { setTimeout(() => { if(!$("blocks").contains(document.activeElement)) render(); }, 0); });
+$("blocks").addEventListener("click", e => {
+  const del = e.target.closest("[data-del]");
+  if(del){ const i = +del.dataset.del; mutateDay(S.date, day => { day.b.splice(i, 1); }); return; }
+  if(e.target.id === "addBlock"){
+    const raw = (getDay(S.date) || {}).b || [];
+    if(raw.length && !raw[raw.length-1][0] && !raw[raw.length-1][1]) return;
+    mutateDay(S.date, day => { day.b.push(["",""]); });
+    setTimeout(() => { const n = (getDay(S.date).b||[]).length - 1; const el = $("b"+n+"s"); if(el) el.focus(); }, 0);
+  }
+});
+$("extern").onchange = e => mutateDay(S.date, day => { if(e.target.checked) day.w = S.cfg.wege || 10; else delete day.w; });
+$("wegeMinus").onclick = () => mutateDay(S.date, day => { day.w = Math.max(0, (day.w||0) - 5); if(!day.w) delete day.w; });
+$("wegePlus").onclick = () => mutateDay(S.date, day => { day.w = (day.w||0) + 5; });
+$("note").addEventListener("change", e => mutateDay(S.date, day => { const v = e.target.value.trim(); if(v) day.n = v; else delete day.n; }));
+$("months").addEventListener("click", e => { const r = e.target.closest("[data-go]"); if(r){ S.date = r.dataset.go; go("heute"); } });
+
+/* Einstellungen */
+$("cSoll").onchange = e => { const m = toMin(e.target.value); if(m) mutateCfg({ soll:m }); };
+$("cWege").onchange = e => mutateCfg({ wege: Math.max(0, parseInt(e.target.value,10) || 0) });
+const saldoIn = () => { const h = parseInt($("cSH").value,10)||0, m = Math.min(59, parseInt($("cSM").value,10)||0); mutateCfg({ startSaldo: (+$("cSign").value) * (h*60+m) }); };
+$("cSign").onchange = saldoIn; $("cSH").onchange = saldoIn; $("cSM").onchange = saldoIn;
+$("cStich").onchange = e => mutateCfg({ stichtag: e.target.value || "" });
+$("cTaz").onchange = e => mutateCfg({ tazVorher: Math.max(0, parseInt(e.target.value,10) || 0) });
+$("cFrei").onchange = e => mutateCfg({ frei2412: e.target.checked });
+$("csvBtn").onclick = () => {
+  let s = S.cfg.startSaldo;
+  const lines = ["Datum;Tag;Art;Blöcke;Wegezeit;Pausen;Ist;Soll;Diff;Saldo;Notiz"];
+  allDates().filter(inRange).forEach(d => { const c = compute(d); if(c.diff != null) s += c.diff;
+    lines.push([dmy(d)+d.slice(0,4), WD[parseISO(d).getDay()], c.typ, (c.day.b||[]).map(x => (x[0]||"")+"-"+(x[1]||"")).join(" "), dur(c.wege), dur(c.pauses), dur(c.ist), dur(c.soll), c.diff==null?"":signed(c.diff).replace("−","-"), signed(s).replace("−","-"), (c.day.n||"").replace(/;/g,",")].join(";")); });
+  const txt = lines.join("\n"), out = $("csvOut");
+  out.value = txt; out.hidden = false;
+  try {
+    navigator.clipboard.writeText(txt).then(() => { $("csvMsg").textContent = "Kopiert – " + (lines.length-1) + " Tage. In Excel einfügen."; },
+      () => { out.select(); $("csvMsg").textContent = "Text unten markiert – kopiere ihn manuell."; });
+  } catch(e){ out.select(); $("csvMsg").textContent = "Text unten markiert – kopiere ihn manuell."; }
+};
+
+/* Sicherung */
+$("expBtn").onclick = async () => {
+  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:1, exported:new Date().toISOString(), cfg:S.cfg, months:S.months }, null, 1);
+  const name = "arbeitszeit-sicherung-" + todayISO() + ".json";
+  try {
+    const file = new File([txt], name, { type:"application/json" });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); $("bakMsg").textContent = "Sicherung erstellt."; return; }
+  } catch(e){ if(e && e.name === "AbortError") return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type:"application/json" })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); $("bakMsg").textContent = "Sicherung heruntergeladen.";
+};
+$("impFile").onchange = e => {
+  const f = e.target.files && e.target.files[0]; if(!f) return;
+  const r = new FileReader();
+  r.onload = () => {
+    try {
+      const d = JSON.parse(r.result);
+      if(!d || typeof d.months !== "object" || typeof d.cfg !== "object") throw new Error("Format");
+      if(!confirm("Sicherung vom " + (d.exported||"?").slice(0,10) + " laden? Die aktuellen Daten auf diesem Gerät werden ersetzt.")) return;
+      S.months = d.months; S.cfg = { ...DEF, ...d.cfg };
+      ls.set("azb.local", { months:S.months, cfg:S.cfg });
+      $("bakMsg").textContent = "Sicherung geladen."; render();
+    } catch(err){ $("bakMsg").textContent = "Die Datei ist keine gültige Sicherung dieser App."; }
+    e.target.value = "";
+  };
+  r.readAsText(f);
+};
+
+/* Live-Uhr */
+setInterval(() => { if(S.tab === "heute") renderHeute(false); }, 20000);
+document.addEventListener("visibilitychange", () => { if(!document.hidden) render(); });
+
+/* ---------- Start ---------- */
+render();
+(function init(){
+  const FIRST_RUN = {
+    cfg: { soll:456, wege:10, startSaldo:1749, stichtag:"2026-09-25", tazVorher:3, frei2412:false, max:600 },
+    months: { "2026-09": { "2026-09-28": { b:[["07:00","13:00"],["13:30","14:30"],["15:35","17:15"]], n:"aus Excel übernommen" } } }
+  };
+  const loc = ls.get("azb.local") || FIRST_RUN;
+  S.months = loc.months || {}; S.cfg = { ...DEF, ...(loc.cfg||{}) };
+  ls.set("azb.local", { months:S.months, cfg:S.cfg });
+  S.mode = "local";
+  setSync("local", "Auf diesem Gerät gespeichert");
+  try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
+  render();
+})();
+if("serviceWorker" in navigator){ window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }
+})();
+</script>
+
+</body>
+</html>
