@@ -8,8 +8,8 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Arbeitszeit">
-<meta name="theme-color" content="#F2F5F4" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0D1413" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F3F3F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111111" media="(prefers-color-scheme: dark)">
 <meta name="robots" content="noindex">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
@@ -18,22 +18,27 @@
 <body>
 <style>
 /* Layout: one-column phone app (max 560px), bottom tab bar, big clock-style numerals for the numbers that matter */
+/* Farbkonzept v2: Sparkassenrot als Markenfarbe (Hero, aktive Elemente, Schalter),
+   neutrale Grau-/Anthrazit-Flächen, Grün/Bordeaux nur für Plus/Minus. */
 :root{
-  --bg:#F2F5F4; --surface:#FFFFFF; --surface-2:#E7ECEB; --fg:#14201F; --muted:#5B6967; --line:#D3DBD9;
-  --accent:#0B6E74; --accent-ink:#FFFFFF; --accent-soft:#D6ECEC;
-  --pos:#1D7644; --pos-bg:#DDF1E4; --neg:#B0261E; --neg-bg:#FBE2DF; --info:#7A5200; --info-bg:#FBEFD5;
+  --bg:#F3F3F3; --surface:#FFFFFF; --surface-2:#EBEBEB; --fg:#1A1A1A; --muted:#5E5E5E; --line:#DCDCDC;
+  --accent:#E60000; --accent-ink:#FFFFFF; --accent-soft:#FDECEC; --accent-text:#CC0000; --accent-press:#B80000;
+  --pos:#11753A; --pos-bg:#E0F2E6; --neg:#9E0B1A; --neg-bg:#F9E1E3; --info:#7A5200; --info-bg:#FBEFD5;
+  --dark:#262626; --dark-ink:#FFFFFF;
   --font-num:-apple-system,"SF Pro Display",system-ui,"Segoe UI",Roboto,sans-serif;
   --font-body:-apple-system,"SF Pro Text",system-ui,"Segoe UI",Roboto,sans-serif;
   --r:14px;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
-  --bg:#0D1413; --surface:#161F1E; --surface-2:#1F2A29; --fg:#E4ECEA; --muted:#94A4A1; --line:#2A3735;
-  --accent:#52C3C6; --accent-ink:#052022; --accent-soft:#16393A;
-  --pos:#62CC8F; --pos-bg:#123020; --neg:#FF8C82; --neg-bg:#3B1714; --info:#F1BA5E; --info-bg:#35280F; color-scheme:dark}}
+  --bg:#111111; --surface:#1C1C1C; --surface-2:#272727; --fg:#EDEDED; --muted:#A6A6A6; --line:#333333;
+  --accent:#E60000; --accent-ink:#FFFFFF; --accent-soft:#3A1515; --accent-text:#FF6B6B; --accent-press:#B80000;
+  --pos:#5FD08D; --pos-bg:#123020; --neg:#FF8C8C; --neg-bg:#3B1618; --info:#F1BA5E; --info-bg:#35280F;
+  --dark:#EDEDED; --dark-ink:#111111; color-scheme:dark}}
 :root[data-theme="dark"]{
-  --bg:#0D1413; --surface:#161F1E; --surface-2:#1F2A29; --fg:#E4ECEA; --muted:#94A4A1; --line:#2A3735;
-  --accent:#52C3C6; --accent-ink:#052022; --accent-soft:#16393A;
-  --pos:#62CC8F; --pos-bg:#123020; --neg:#FF8C82; --neg-bg:#3B1714; --info:#F1BA5E; --info-bg:#35280F; color-scheme:dark}
+  --bg:#111111; --surface:#1C1C1C; --surface-2:#272727; --fg:#EDEDED; --muted:#A6A6A6; --line:#333333;
+  --accent:#E60000; --accent-ink:#FFFFFF; --accent-soft:#3A1515; --accent-text:#FF6B6B; --accent-press:#B80000;
+  --pos:#5FD08D; --pos-bg:#123020; --neg:#FF8C8C; --neg-bg:#3B1618; --info:#F1BA5E; --info-bg:#35280F;
+  --dark:#EDEDED; --dark-ink:#111111; color-scheme:dark}
 *{box-sizing:border-box}
 html,body{background:var(--bg);color:var(--fg)}
 body{font-family:var(--font-body);font-size:16px;line-height:1.4;-webkit-text-size-adjust:100%}
@@ -42,7 +47,7 @@ html,body{margin:0}
 .app{max-width:560px;margin:0 auto;padding-inline:16px;padding-block:calc(12px + env(safe-area-inset-top,0px)) calc(92px + env(safe-area-inset-bottom,0px))}
 button,input,select{font:inherit;color:inherit}
 button{cursor:pointer}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+:focus-visible{outline:2px solid var(--accent-text);outline-offset:2px}
 .num{font-family:var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
 .muted{color:var(--muted)}
 .label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
@@ -57,27 +62,27 @@ button{cursor:pointer}
 .datenav h1{flex:1;min-width:0;margin:0;font-family:var(--font-num);font-weight:600;font-size:24px;line-height:1.1;text-wrap:balance}
 .datenav h1 small{display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .iconbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:20px;line-height:1}
-.pill{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
+.pill{border:1px solid var(--accent-text);background:var(--surface);color:var(--accent-text);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
 
 /* hero */
 .hero{background:var(--accent);color:var(--accent-ink);border:0;display:grid;gap:4px;padding:16px 16px 14px}
-.hero .label{color:inherit;opacity:.8}
+.hero .label{color:inherit;opacity:.9}
 .hero .big{font-family:var(--font-num);font-weight:700;font-size:64px;line-height:1;font-variant-numeric:tabular-nums}
-.hero .sub{font-size:15px;opacity:.9}
+.hero .sub{font-size:15px;font-weight:600}
 .hero .row{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:8px;padding-top:10px;border-top:1px solid color-mix(in srgb,var(--accent-ink) 25%,transparent);font-size:15px}
 .hero .row b{font-family:var(--font-num);font-size:18px}
 .wish{display:flex;align-items:center;gap:8px;margin-top:6px}
 .wish button{width:34px;height:30px;border-radius:9px;border:1px solid color-mix(in srgb,var(--accent-ink) 40%,transparent);background:transparent;color:inherit;font-size:18px;line-height:1}
 .wish .num{font-size:18px;min-width:52px;text-align:center}
 
-.stamp{width:100%;border:0;border-radius:var(--r);padding:16px;background:var(--fg);color:var(--bg);display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-weight:700;font-size:20px}
+.stamp{width:100%;border:0;border-radius:var(--r);padding:16px;background:var(--dark);color:var(--dark-ink);display:flex;align-items:baseline;justify-content:space-between;gap:12px;font-weight:700;font-size:20px}
 .stamp .num{font-size:26px}
 .stamp:active{transform:scale(.99)}
 
 /* segmented */
 .seg{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface-2);border-radius:12px;padding:3px;gap:3px}
 .seg button{border:0;background:transparent;border-radius:9px;padding:8px 2px;font-size:14px;font-weight:600;color:var(--muted)}
-.seg button[aria-pressed="true"]{background:var(--surface);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--accent-text);box-shadow:0 1px 2px rgba(0,0,0,.12)}
 .holiday{font-size:14px;font-weight:600;color:var(--info);background:var(--info-bg);border-radius:10px;padding:8px 10px}
 
 /* blocks */
@@ -89,7 +94,7 @@ button{cursor:pointer}
 .brow .dash{color:var(--muted)}
 .brow .del{width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-size:20px}
 .gap{font-size:13px;color:var(--muted);padding-left:26px}
-.addb{border:1px dashed var(--line);background:transparent;border-radius:10px;padding:10px;font-weight:600;color:var(--accent)}
+.addb{border:1px dashed var(--line);background:transparent;border-radius:10px;padding:10px;font-weight:600;color:var(--accent-text)}
 .line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px}
 .line + .line{border-top:1px solid var(--line)}
 .switch{position:relative;width:48px;height:28px;flex:none}
@@ -97,7 +102,7 @@ button{cursor:pointer}
 .switch span{position:absolute;inset:0;border-radius:999px;background:var(--surface-2);border:1px solid var(--line);transition:background .15s}
 .switch span::after{content:"";position:absolute;top:2px;left:2px;width:22px;height:22px;border-radius:50%;background:var(--surface);box-shadow:0 1px 2px rgba(0,0,0,.25);transition:transform .15s}
 .switch input:checked + span{background:var(--accent);border-color:var(--accent)}
-.switch input:checked + span::after{transform:translateX(20px)}
+.switch input:checked + span::after{transform:translateX(20px);background:#FFFFFF}
 .step{display:flex;align-items:center;gap:6px}
 .step button{width:34px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--surface)}
 .note{width:100%;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:9px 10px}
@@ -113,6 +118,19 @@ button{cursor:pointer}
 .konto .v{font-family:var(--font-num);font-size:24px;font-weight:600}
 .konto .v.xl{font-size:34px}
 .sechead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
+/* TAZ-Kontingent */
+.taz{margin-top:12px;padding-top:12px;border-top:1px solid var(--line);display:grid;gap:6px}
+.pips{display:flex;gap:5px}
+.pips i{flex:1;height:8px;border-radius:4px;background:var(--surface-2);border:1px solid var(--line)}
+.pips i.used{background:var(--accent);border-color:var(--accent)}
+.pips i.plan{background:var(--accent-soft);border-color:var(--accent)}
+.pips i.over{background:var(--neg);border-color:var(--neg)}
+.taz .txt{font-size:14px;color:var(--muted)}
+.taz .txt b{color:var(--fg);font-family:var(--font-num);font-size:16px}
+.taz .full{font-size:14px;font-weight:600;color:var(--info);background:var(--info-bg);border-radius:10px;padding:8px 10px}
+.wegeval{font-family:var(--font-num);font-size:16px;font-weight:600;color:var(--muted);margin-right:4px}
+.sub2{display:block;font-size:13px;color:var(--muted)}
+.ver{font-size:13px;color:var(--muted);text-align:center}
 
 /* Verlauf */
 .month{padding:0;overflow:hidden}
@@ -129,6 +147,7 @@ button{cursor:pointer}
 .drow .s{text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .drow.today{background:var(--accent-soft)}
 .drow.missing .d{color:var(--muted);font-weight:400}
+.mhead.cur{box-shadow:inset 4px 0 0 var(--accent)}
 
 /* Einstellungen */
 .field{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
@@ -139,6 +158,7 @@ button{cursor:pointer}
 .saldoin{display:flex;gap:6px;align-items:center}
 .btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:10px 14px;font-weight:600}
 .btn.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.primary:active{background:var(--accent-press)}
 .help{font-size:14px;color:var(--muted);display:grid;gap:6px}
 .help p{margin:0}
 
@@ -147,7 +167,9 @@ button{cursor:pointer}
 .tabbar .in{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;width:100%;max-width:560px}
 .tabbar button{border:0;background:transparent;border-radius:10px;padding:8px 4px;font-weight:600;font-size:14px;color:var(--muted);display:grid;justify-items:center;gap:2px}
 .tabbar button svg{width:22px;height:22px}
-.tabbar button[aria-current="page"]{color:var(--accent)}
+.tabbar button{position:relative}
+.tabbar button[aria-current="page"]{color:var(--accent-text)}
+.tabbar button[aria-current="page"]::before{content:"";position:absolute;top:-7px;left:25%;right:25%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
 .banner{font-size:14px;background:var(--info-bg);color:var(--info);border-radius:10px;padding:10px 12px}
 @media (max-width:380px){.hero .big{font-size:54px}.stat .v{font-size:21px}.seg button{font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -190,13 +212,9 @@ button{cursor:pointer}
         <div class="blocks" id="blocks"></div>
       </div>
       <div>
-        <div class="line">
-          <span>Externer Termin <span class="muted">(Wegezeit)</span></span>
-          <label class="switch"><input type="checkbox" id="extern" aria-label="Externer Termin"><span></span></label>
-        </div>
-        <div class="line" id="wegeRow" hidden>
-          <span class="muted">Wegezeit</span>
-          <div class="step"><button id="wegeMinus" aria-label="5 Minuten weniger">−</button><span class="num" id="wegeVal" style="min-width:44px;text-align:center;font-size:18px">0:10</span><button id="wegePlus" aria-label="5 Minuten mehr">+</button></div>
+        <div class="line" id="wegeLine">
+          <span>Im Büro <span class="muted">(Wegezeit)</span><span class="sub2" id="wegeHint">Weg im Gebäude &amp; Laptop-Aufbau am Shared Desk</span></span>
+          <span style="display:flex;align-items:center;gap:6px"><span class="wegeval" id="wegeVal"></span><label class="switch"><input type="checkbox" id="extern" aria-label="Im Büro – Wegezeit gutschreiben"><span></span></label></span>
         </div>
       </div>
       <input class="note" id="note" type="text" placeholder="Notiz (optional)" autocomplete="off">
@@ -216,9 +234,14 @@ button{cursor:pointer}
       <div class="konto">
         <div><div class="label">Saldo</div><div class="v xl" id="kSaldo">–</div></div>
         <div><div class="label">TAZ möglich</div><div class="v" id="kTaz">–</div></div>
-        <div><div class="label">Rest</div><div class="v" id="kRest">–</div></div>
+        <div><div class="label">Gleitzeit</div><div class="v" id="kRest">–</div></div>
       </div>
-      <div class="muted" style="font-size:14px;margin-top:8px" id="kTazYear"></div>
+      <div class="taz" id="tazBox">
+        <div class="sechead" style="margin:0"><span class="label" id="tazHead">TAZ-Kontingent</span><span class="muted" style="font-size:13px" id="tazCount"></span></div>
+        <div class="pips" id="tazPips" aria-hidden="true"></div>
+        <div class="txt" id="kTazYear"></div>
+        <div class="full" id="tazFull" hidden></div>
+      </div>
     </div>
   </section>
 
@@ -233,17 +256,20 @@ button{cursor:pointer}
     <div class="datenav"><h1>Einstellungen<small id="syncText" class="sync"><span class="dot" id="syncDot"></span><span id="syncLabel">Verbinde …</span></small></h1></div>
     <div class="card">
       <div class="field"><label for="cSoll">Sollzeit pro Tag</label><input type="time" id="cSoll"></div>
-      <div class="field"><label for="cWege">Wegezeit Standard <small>Minuten, wenn „Externer Termin“ an ist</small></label><input type="number" id="cWege" min="0" max="240" inputmode="numeric"></div>
+      <div class="field"><label for="cWege">Wegezeit Büro <small>Minuten, die gutgeschrieben werden, wenn „Im Büro“ an ist (Weg im Gebäude, Laptop-Aufbau). Gilt für neu markierte Tage.</small></label><input type="number" id="cWege" min="0" max="240" inputmode="numeric"></div>
       <div class="field"><label>Startsaldo <small>Gleitzeitkonto am Stichtag</small></label>
         <div class="saldoin"><select id="cSign" aria-label="Vorzeichen"><option value="1">+</option><option value="-1">−</option></select><input type="number" id="cSH" min="0" max="999" inputmode="numeric" aria-label="Stunden" style="width:64px"><span>:</span><input type="number" id="cSM" min="0" max="59" inputmode="numeric" aria-label="Minuten" style="width:56px"></div></div>
       <div class="field"><label for="cStich">Stichtag <small>Saldo gilt am Ende dieses Tages</small></label><input type="date" id="cStich"></div>
-      <div class="field"><label for="cTaz">TAZ im Startjahr schon genommen</label><input type="number" id="cTaz" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label for="cTazMax">TAZ-Tage pro Jahr <small>Höchstens so viele ganze Tage aus dem Gleitzeitkonto</small></label><input type="number" id="cTazMax" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label for="cTaz">TAZ im Startjahr schon genommen <small>vor dem Stichtag</small></label><input type="number" id="cTaz" min="0" max="60" inputmode="numeric"></div>
       <div class="field"><label for="cFrei">Heiligabend &amp; Silvester frei</label><label class="switch"><input type="checkbox" id="cFrei"><span></span></label></div>
     </div>
     <div class="card help">
       <p><b style="color:var(--fg)">So rechnet die App</b></p>
       <p>Die Lücken zwischen deinen Blöcken sind Pausen. Nach Arbeitszeitgesetz zählen nur Pausen ab 15 Minuten: über 6 h braucht es 30 min, über 9 h 45 min, maximal 10 h am Tag.</p>
-      <p>TAZ zieht die Sollzeit vom Konto ab. Urlaub, Krank, Frei und Feiertage (Hessen, automatisch) sind neutral.</p>
+      <p>TAZ zieht die Sollzeit vom Konto ab. Pro Jahr sind höchstens 6 TAZ-Tage möglich (einstellbar). „TAZ möglich“ zeigt deshalb das Minimum aus Saldo und restlichem Kontingent. Sind alle TAZ genutzt, bleibt das Plus nur noch Gleitzeit.</p>
+      <p>„Im Büro“ schreibt dir die feste Wegezeit gut – für den Weg auf dem Gelände und im Gebäude sowie den Aufbau deines Laptops am Shared Desk. Die Minuten zählen zur Ist-Zeit.</p>
+      <p>Urlaub, Krank, Frei und Feiertage (Hessen, automatisch) sind neutral.</p>
       <p>„Gehen um“ erscheint, sobald ein Block gestartet, aber noch nicht beendet ist, und enthält fehlende Pflichtpausen.</p>
     </div>
     <div class="card" style="display:grid;gap:10px">
@@ -255,7 +281,9 @@ button{cursor:pointer}
       <label class="btn" for="impFile" style="text-align:center">Sicherung wiederherstellen …</label>
       <input type="file" id="impFile" accept=".json,application/json" hidden>
       <span class="muted" style="font-size:14px" id="bakMsg">Deine Daten liegen nur auf diesem Gerät. Speichere ab und zu eine Sicherung, z. B. in iCloud Drive.</span>
+      <button class="btn" id="preBtn" hidden>Stand vor dem Update wiederherstellen</button>
     </div>
+    <div class="ver">Version 2 · Oktober 2026</div>
   </section>
 </div>
 
@@ -308,7 +336,7 @@ function holidayName(ds){
 }
 
 /* ---------- state ---------- */
-const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, frei2412:false, max:600 };
+const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, tazMax:6, frei2412:false, max:600 };
 const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), tab:"heute", mode:"loading", dirty:new Set(), cfgDirty:false };
 let db = null; const ver = {}, timers = {}, saving = {}; let cfgTimer = null, cfgSaving = null;
 
@@ -356,6 +384,22 @@ function saldoBis(ds){
   return s;
 }
 const needPause = t => t > 540 ? 45 : t > 360 ? 30 : 0;
+
+/* ---------- TAZ-Kontingent (max. 6 pro Kalenderjahr) ---------- */
+const tazMax = () => { const n = parseInt(S.cfg.tazMax, 10); return Number.isFinite(n) && n >= 0 ? n : 6; };
+function isTazDay(x){ if(!inRange(x)) return false; const c = compute(x); return c.typ === "TAZ" && !c.weekend; }
+function tazDates(y){ return allDates().filter(x => x.startsWith(y) && isTazDay(x)); }
+function tazVorherIn(y){ return (S.cfg.stichtag && S.cfg.stichtag.startsWith(y)) ? (S.cfg.tazVorher || 0) : 0; }
+/* Der wievielte TAZ im Jahr ist dieser Tag? (inkl. TAZ vor dem Stichtag) */
+function tazNr(ds){ const y = ds.slice(0,4); return tazVorherIn(y) + tazDates(y).filter(x => x <= ds).length; }
+function tazOver(ds){ return isTazDay(ds) && tazNr(ds) > tazMax(); }
+/* Stand des Kontingents aus Sicht von Tag ds */
+function tazStatus(ds){
+  const y = ds.slice(0,4), list = tazDates(y), max = tazMax();
+  const taken = tazVorherIn(y) + list.filter(x => x <= ds).length;
+  const planned = list.filter(x => x > ds).length;
+  return { y, max, taken, planned, rest: Math.max(0, max - taken - planned), over: Math.max(0, taken + planned - max) };
+}
 
 /* ---------- speichern ---------- */
 function setSync(kind, text){
@@ -438,10 +482,13 @@ function renderHeute(full){
     big = c.typ === "Arbeit" || c.typ === "Feiertag" ? "Frei" : c.typ;
     sub = c.hol || "Kein Soll an diesem Tag";
   } else if(!c.any && c.typ === "TAZ"){
-    label = "Gleittag (TAZ)"; big = signed(c.diff); sub = "Sollzeit wird vom Konto abgezogen";
+    label = "Gleittag (TAZ)"; big = signed(c.diff);
+    const nr = tazNr(ds), y0 = ds.slice(0,4);
+    sub = nr > tazMax() ? "Achtung: " + nr + ". TAZ in " + y0 + " – erlaubt sind " + tazMax() + ". Ab hier nur noch Gleitzeit."
+                        : "Sollzeit wird vom Konto abgezogen · TAZ " + nr + " von " + tazMax() + " in " + y0;
   } else if(!c.any){
     if(isToday){
-      const at = nowMin() + target + needPause(target);
+      const at = nowMin() + Math.max(0, target - c.wege) + needPause(target);
       label = "Wenn du jetzt kommst"; big = clock(at); sub = "Gehen um, inkl. " + needPause(target) + " min Pause";
     } else { label = "Noch keine Zeiten"; big = "–"; sub = "Trag deine Blöcke unten ein"; }
   } else {
@@ -482,10 +529,14 @@ function renderHeute(full){
     html += '<button class="addb" id="addBlock">+ Block hinzufügen</button>';
     bl.innerHTML = html;
   }
-  $("checkChip").innerHTML = c.check ? '<span class="chip '+c.level+'">'+esc(c.check)+'</span>' : "";
+  $("checkChip").innerHTML = (c.check ? '<span class="chip '+c.level+'">'+esc(c.check)+'</span>' : "") +
+    (tazOver(ds) ? ' <span class="chip neg">TAZ über Limit</span>' : "");
 
-  /* extern */
-  $("extern").checked = c.wege > 0; $("wegeRow").hidden = !(c.wege > 0); $("wegeVal").textContent = dur(c.wege);
+  /* Büro / Wegezeit (fester Wert, wird beim Einschalten für den Tag gespeichert) */
+  $("extern").checked = c.wege > 0;
+  $("wegeVal").textContent = "+" + dur(c.wege > 0 ? c.wege : (S.cfg.wege || 0));
+  $("wegeVal").style.color = c.wege > 0 ? "var(--fg)" : "";
+  $("wegeLine").hidden = c.typ !== "Arbeit" && !(c.wege > 0);
   if(document.activeElement !== $("note")) $("note").value = c.day.n || "";
 
   /* stats */
@@ -499,13 +550,27 @@ function renderHeute(full){
   /* konto */
   $("kontoStand").textContent = liveOpen ? "Stand jetzt, inkl. laufendem Block" : "Stand " + dmy(ds) + (c.open!=null ? ", ohne offenen Block" : "");
   $("kSaldo").textContent = signed(saldo); $("kSaldo").className = "v xl " + (saldo < 0 ? "neg" : "");
-  const taz = saldo > 0 ? Math.floor(saldo / S.cfg.soll) : 0;
+  const ts = tazStatus(ds);
+  const bySaldo = saldo > 0 ? Math.floor(saldo / S.cfg.soll) : 0;
+  const taz = Math.min(bySaldo, ts.rest);
+  const gleit = saldo - taz * S.cfg.soll;
   $("kTaz").textContent = String(taz);
-  $("kRest").textContent = saldo > 0 ? dur(saldo - taz * S.cfg.soll) : "–";
-  const y = ds.slice(0,4);
-  let tazYear = allDates().filter(x => x.startsWith(y) && x <= ds && compute(x).typ === "TAZ" && inRange(x)).length;
-  if(S.cfg.stichtag && S.cfg.stichtag.startsWith(y)) tazYear += (S.cfg.tazVorher || 0);
-  $("kTazYear").textContent = "TAZ genommen " + y + ": " + tazYear + (tazYear === 1 ? " Tag" : " Tage");
+  $("kRest").textContent = signed(gleit); $("kRest").className = "v " + (gleit < 0 ? "neg" : "");
+  $("tazHead").textContent = "TAZ-Kontingent " + ts.y;
+  $("tazCount").textContent = (ts.taken + ts.planned) + " von " + ts.max;
+  let pips = "";
+  const n = Math.max(ts.max, ts.taken + ts.planned);
+  for(let i = 0; i < n; i++){
+    const cls = i >= ts.max ? (i < ts.taken + ts.planned ? "over" : "") : i < ts.taken ? "used" : i < ts.taken + ts.planned ? "plan" : "";
+    pips += '<i class="' + cls + '"></i>';
+  }
+  $("tazPips").innerHTML = pips;
+  $("kTazYear").innerHTML = "<b>" + ts.taken + "</b> genommen" + (ts.planned ? " · <b>" + ts.planned + "</b> geplant" : "") + " · noch <b>" + ts.rest + "</b> möglich";
+  let tazMsg = "";
+  if(ts.over) tazMsg = "Achtung: " + (ts.taken + ts.planned) + " TAZ in " + ts.y + " eingetragen – " + ts.over + " mehr als erlaubt.";
+  else if(ts.rest === 0) tazMsg = "Alle " + ts.max + " TAZ für " + ts.y + " sind genutzt – weiteres Plus bleibt Gleitzeit.";
+  else if(bySaldo > ts.rest) tazMsg = "Dein Saldo reicht für " + bySaldo + " TAZ, das Kontingent nur noch für " + ts.rest + ".";
+  $("tazFull").textContent = tazMsg; $("tazFull").hidden = !tazMsg;
 }
 
 /* ---------- render: Verlauf ---------- */
@@ -524,11 +589,11 @@ function renderVerlauf(){
   if(!keys.length){ $("months").innerHTML = '<div class="card muted">Noch keine Tage erfasst. Stempel auf der Seite „Tag“ ein oder trag deine Blöcke dort ein.</div>'; return; }
   $("months").innerHTML = keys.map(k => {
     const g = groups[k];
-    let ist=0, soll=0, diff=0, taz=0, url=0, kr=0;
+    let ist=0, soll=0, diff=0, taz=0, url=0, kr=0; const curM = k === today.slice(0,7);
     g.forEach(r => { if(r.c.diff != null){ ist += r.c.ist; soll += r.c.soll; diff += r.c.diff; }
       if(r.c.typ === "TAZ") taz++; if(r.c.typ === "Urlaub") url++; if(r.c.typ === "Krank") kr++; });
     const end = g[g.length-1].s;
-    const head = '<div class="mhead"><h2>' + MON[+k.slice(5,7)-1] + " " + k.slice(0,4) + '</h2><div class="mstats">' +
+    const head = '<div class="mhead'+(curM?" cur":"")+'"><h2>' + MON[+k.slice(5,7)-1] + " " + k.slice(0,4) + '</h2><div class="mstats">' +
       '<span>Ist <b>'+dur(ist)+'</b></span><span>Soll <b>'+dur(soll)+'</b></span>' +
       '<span>Diff <b class="'+(diff<0?"neg":"pos")+'">'+signed(diff)+'</b></span><span>Saldo <b>'+signed(end)+'</b></span>' +
       (taz ? '<span>TAZ <b>'+taz+'</b></span>' : "") + (url ? '<span>Urlaub <b>'+url+'</b></span>' : "") + (kr ? '<span>Krank <b>'+kr+'</b></span>' : "") +
@@ -538,10 +603,11 @@ function renderVerlauf(){
       const times = (c.day.b||[]).map(x => (x[0]||"?") + "–" + (x[1]||"…")).join(" · ");
       const missing = c.diff == null;
       let chip = "";
-      if(c.typ !== "Arbeit") chip = '<span class="chip '+(c.typ==="TAZ"?"info":"plain")+'">'+esc(c.hol||c.typ)+'</span>';
+      if(c.typ !== "Arbeit") chip = '<span class="chip '+(c.typ==="TAZ"?"info":"plain")+'">'+esc(c.hol||(c.typ==="TAZ" && !c.weekend ? "TAZ "+tazNr(r.d) : c.typ))+'</span>';
+      if(tazOver(r.d)) chip += '<span class="chip neg">über Limit</span>';
       if(c.level === "neg") chip += '<span class="chip neg">'+esc(c.check)+'</span>';
       if(c.open != null) chip += '<span class="chip info">läuft</span>';
-      const t = [times, c.wege ? "Wegezeit " + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
+      const t = [times, c.wege ? "Büro +" + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
       return '<button class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+'" data-go="'+r.d+'">' +
         '<span class="d">'+wd+" "+dmy(r.d)+chip+'</span>' +
         '<span class="r '+(missing?"muted":(c.diff<0?"neg":"pos"))+'">'+(missing?"–":signed(c.diff))+'</span>' +
@@ -559,7 +625,7 @@ function renderSet(){
   put("cSoll", clock(c.soll)); put("cWege", c.wege);
   put("cSign", c.startSaldo < 0 ? "-1" : "1");
   put("cSH", Math.floor(Math.abs(c.startSaldo)/60)); put("cSM", pad(Math.abs(c.startSaldo)%60));
-  put("cStich", c.stichtag || ""); put("cTaz", c.tazVorher || 0);
+  put("cStich", c.stichtag || ""); put("cTaz", c.tazVorher || 0); put("cTazMax", tazMax());
   $("cFrei").checked = !!c.frei2412;
 }
 
@@ -612,8 +678,6 @@ $("blocks").addEventListener("click", e => {
   }
 });
 $("extern").onchange = e => mutateDay(S.date, day => { if(e.target.checked) day.w = S.cfg.wege || 10; else delete day.w; });
-$("wegeMinus").onclick = () => mutateDay(S.date, day => { day.w = Math.max(0, (day.w||0) - 5); if(!day.w) delete day.w; });
-$("wegePlus").onclick = () => mutateDay(S.date, day => { day.w = (day.w||0) + 5; });
 $("note").addEventListener("change", e => mutateDay(S.date, day => { const v = e.target.value.trim(); if(v) day.n = v; else delete day.n; }));
 $("months").addEventListener("click", e => { const r = e.target.closest("[data-go]"); if(r){ S.date = r.dataset.go; go("heute"); } });
 
@@ -624,10 +688,11 @@ const saldoIn = () => { const h = parseInt($("cSH").value,10)||0, m = Math.min(5
 $("cSign").onchange = saldoIn; $("cSH").onchange = saldoIn; $("cSM").onchange = saldoIn;
 $("cStich").onchange = e => mutateCfg({ stichtag: e.target.value || "" });
 $("cTaz").onchange = e => mutateCfg({ tazVorher: Math.max(0, parseInt(e.target.value,10) || 0) });
+$("cTazMax").onchange = e => { const v = parseInt(e.target.value,10); mutateCfg({ tazMax: Number.isFinite(v) && v >= 0 ? v : 6 }); };
 $("cFrei").onchange = e => mutateCfg({ frei2412: e.target.checked });
 $("csvBtn").onclick = () => {
   let s = S.cfg.startSaldo;
-  const lines = ["Datum;Tag;Art;Blöcke;Wegezeit;Pausen;Ist;Soll;Diff;Saldo;Notiz"];
+  const lines = ["Datum;Tag;Art;Blöcke;Wegezeit Büro;Pausen;Ist;Soll;Diff;Saldo;Notiz"];
   allDates().filter(inRange).forEach(d => { const c = compute(d); if(c.diff != null) s += c.diff;
     lines.push([dmy(d)+d.slice(0,4), WD[parseISO(d).getDay()], c.typ, (c.day.b||[]).map(x => (x[0]||"")+"-"+(x[1]||"")).join(" "), dur(c.wege), dur(c.pauses), dur(c.ist), dur(c.soll), c.diff==null?"":signed(c.diff).replace("−","-"), signed(s).replace("−","-"), (c.day.n||"").replace(/;/g,",")].join(";")); });
   const txt = lines.join("\n"), out = $("csvOut");
@@ -640,7 +705,7 @@ $("csvBtn").onclick = () => {
 
 /* Sicherung */
 $("expBtn").onclick = async () => {
-  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:1, exported:new Date().toISOString(), cfg:S.cfg, months:S.months }, null, 1);
+  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:2, exported:new Date().toISOString(), cfg:S.cfg, months:S.months }, null, 1);
   const name = "arbeitszeit-sicherung-" + todayISO() + ".json";
   try {
     const file = new File([txt], name, { type:"application/json" });
@@ -666,6 +731,17 @@ $("impFile").onchange = e => {
   r.readAsText(f);
 };
 
+$("preBtn").onclick = () => {
+  const pre = ls.get("azb.pre-v2"); if(!pre || !pre.data) return;
+  if(!confirm("Stand vom " + String(pre.saved||"?").slice(0,10) + " (vor dem Update) wiederherstellen? Einträge, die du seitdem gemacht hast, gehen verloren.")) return;
+  try {
+    const d = JSON.parse(pre.data);
+    S.months = d.months || {}; S.cfg = { ...DEF, ...(d.cfg||{}) };
+    ls.set("azb.local", { months:S.months, cfg:S.cfg });
+    $("bakMsg").textContent = "Stand vor dem Update wiederhergestellt."; render();
+  } catch(err){ $("bakMsg").textContent = "Wiederherstellen nicht möglich."; }
+};
+
 /* Live-Uhr */
 setInterval(() => { if(S.tab === "heute") renderHeute(false); }, 20000);
 document.addEventListener("visibilitychange", () => { if(!document.hidden) render(); });
@@ -677,11 +753,18 @@ render();
     cfg: { soll:456, wege:10, startSaldo:1749, stichtag:"2026-09-25", tazVorher:3, frei2412:false, max:600 },
     months: { "2026-09": { "2026-09-28": { b:[["07:00","13:00"],["13:30","14:30"],["15:35","17:15"]], n:"aus Excel übernommen" } } }
   };
+  /* Sicherheitskopie: Beim ersten Start von Version 2 wird der unveränderte Stand von Version 1
+     einmalig unter einem eigenen Schlüssel abgelegt. Die Daten selbst werden nicht umgebaut. */
+  try {
+    const raw = localStorage.getItem("azb.local");
+    if(raw && !localStorage.getItem("azb.pre-v2")) localStorage.setItem("azb.pre-v2", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
+  } catch(e){}
   const loc = ls.get("azb.local") || FIRST_RUN;
   S.months = loc.months || {}; S.cfg = { ...DEF, ...(loc.cfg||{}) };
   ls.set("azb.local", { months:S.months, cfg:S.cfg });
   S.mode = "local";
   setSync("local", "Auf diesem Gerät gespeichert");
+  try { $("preBtn").hidden = !localStorage.getItem("azb.pre-v2"); } catch(e){}
   try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
   render();
 })();
