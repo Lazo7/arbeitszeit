@@ -54,8 +54,7 @@ button{cursor:pointer}
 .view{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
 .sync{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
-.dot.ok{background:var(--pos)} .dot.err{background:var(--neg)} .dot.local{background:var(--info)}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--info)}
 
 /* date nav */
 .datenav{display:flex;align-items:center;gap:8px}
@@ -99,13 +98,13 @@ button{cursor:pointer}
 
 /* blocks */
 .blocks{display:grid;gap:8px}
-.brow{display:grid;grid-template-columns:auto 1fr auto 1fr auto;align-items:center;gap:8px}
+.brow{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) auto;align-items:center;gap:6px}
 .brow .n{font-size:13px;font-weight:600;color:var(--muted);width:18px}
 .brow input[type=time]{width:100%;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 6px;font-family:var(--font-num);font-size:20px;text-align:center;-webkit-appearance:none;appearance:none;min-height:44px}
 .brow.bad input{border-color:var(--neg)}
 .brow .dash{color:var(--muted)}
 .brow .del{width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-size:20px}
-.gap{font-size:13px;color:var(--muted);padding-left:26px}
+.gap{font-size:13px;color:var(--muted);padding-left:40px}
 .addb{border:1px dashed var(--line);background:transparent;border-radius:10px;padding:10px;font-weight:600;color:var(--accent-text)}
 .line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px}
 .line + .line{border-top:1px solid var(--line)}
@@ -195,6 +194,35 @@ button{cursor:pointer}
 .tabbar button[aria-current="page"]{color:var(--accent-text)}
 .tabbar button[aria-current="page"]::before{content:"";position:absolute;top:-7px;left:25%;right:25%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
 .banner{font-size:14px;background:var(--info-bg);color:var(--info);border-radius:10px;padding:10px 12px}
+/* v2.5: Block-Symbol Haus (Homeoffice) / Bürogebäude (Büro) mit Blocknummer */
+.mode{width:34px;height:42px;border:0;background:transparent;padding:0;display:grid;place-items:center;border-radius:10px;color:var(--muted)}
+.mode svg{width:32px;height:32px;pointer-events:none}
+.mode text{font-family:var(--font-num);font-weight:700;font-size:8.5px;fill:currentColor;stroke:none}
+.mode.b{color:var(--accent-text)}
+.mode:active{background:var(--surface-2)}
+.brow .n.plain{width:34px;text-align:center}
+.modehint{font-size:13px;color:var(--muted)}
+/* v2.5: Genehmigung */
+.chipbtn{border:0;font-family:var(--font-body);cursor:pointer;position:relative;line-height:1.4}
+.chipbtn::before{content:"";position:absolute;inset:-8px -4px}
+.chip.ok{background:var(--pos-bg);color:var(--pos);box-shadow:inset 0 0 0 1px var(--pos)}
+.drow{cursor:pointer;color:inherit;font:inherit}
+/* v2.5: Dialoge, Hinweis, Ideen */
+dialog.sheet{border:0;border-radius:18px;padding:16px;width:min(528px,calc(100vw - 24px));max-height:calc(100dvh - 32px);overflow:auto;background:var(--surface);color:var(--fg);box-shadow:0 10px 40px rgba(0,0,0,.3)}
+dialog.sheet::backdrop{background:rgba(0,0,0,.45)}
+dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-weight:600}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.dlgbtns{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:14px}
+.preview{font-size:14px;color:var(--muted);display:grid;gap:6px;margin-top:10px}
+.preview b{color:var(--fg);font-family:var(--font-num)}
+.warn{font-size:14px;font-weight:600;color:var(--info);background:var(--info-bg);border-radius:10px;padding:8px 10px}
+.rangebtn{width:100%}
+.remind{font-size:14px;font-weight:600;color:var(--info);background:var(--info-bg);border-radius:10px;padding:8px 10px}
+.tabbar button .bdot{position:absolute;top:6px;left:calc(50% + 8px);width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.verrow{display:flex;justify-content:center;align-items:baseline;flex-wrap:wrap;gap:4px 14px}
+.verlink{border:0;background:transparent;padding:4px 2px;margin:-4px -2px;font:inherit;font-size:13px;color:var(--accent-text);text-decoration:underline dotted;text-underline-offset:3px}
+#ideasTxt{width:100%;min-height:220px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;font:inherit;font-size:16px;resize:vertical}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:9;background:var(--dark);color:var(--dark-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;max-width:calc(100vw - 32px);box-shadow:0 4px 16px rgba(0,0,0,.25)}
 @media (max-width:380px){.hero .big{font-size:54px}.stat .v{font-size:21px}.seg button{font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -232,9 +260,11 @@ button{cursor:pointer}
       <div class="seg" role="group" aria-label="Art des Tages" id="seg">
         <button data-art="Arbeit">Arbeit</button><button data-art="TAZ">TAZ</button><button data-art="Urlaub">Urlaub</button><button data-art="Krank">Krank</button><button data-art="Frei">Frei</button>
       </div>
+      <div id="apprInfo" class="line" hidden></div>
       <div>
         <div class="sechead"><span class="label">Zeitblöcke</span><span id="checkChip"></span></div>
         <div class="blocks" id="blocks"></div>
+        <div class="modehint" id="modeHint" hidden>Symbol antippen: Haus = Homeoffice, Gebäude = Büro</div>
       </div>
       <div>
         <div class="line" id="wegeLine">
@@ -277,12 +307,13 @@ button{cursor:pointer}
       <span>Geplante Tage zeigen<span class="sub2" id="planHint"></span></span>
       <label class="switch"><input type="checkbox" id="showPlan" aria-label="Geplante Tage zeigen"><span></span></label>
     </div></div>
+    <button class="btn rangebtn" id="rangeBtn">+ Zeitraum eintragen (Urlaub / TAZ)</button>
     <div id="months" class="view"></div>
   </section>
 
   <!-- EINSTELLUNGEN -->
   <section id="v-set" class="view" aria-label="Einstellungen" hidden>
-    <div class="datenav"><h1>Einstellungen<small id="syncText" class="sync"><span class="dot" id="syncDot"></span><span id="syncLabel">Verbinde …</span></small></h1></div>
+    <div class="datenav"><h1>Einstellungen<small class="sync"><span class="dot"></span><span>Auf diesem Gerät gespeichert</span></small></h1></div>
     <div class="card">
       <div class="field"><label for="cSoll">Sollzeit pro Tag</label><input type="time" id="cSoll"></div>
       <div class="field"><label for="cWege">Wegezeit Büro <small>Minuten, die gutgeschrieben werden, wenn „Im Büro“ an ist (Weg im Gebäude, Laptop-Aufbau). Gilt für neu markierte Tage.</small></label><input type="number" id="cWege" min="0" max="240" inputmode="numeric"></div>
@@ -300,26 +331,53 @@ button{cursor:pointer}
       <p>„Im Büro“ schreibt dir die feste Wegezeit gut – für den Weg auf dem Gelände und im Gebäude sowie den Aufbau deines Laptops am Shared Desk. Die Minuten zählen zur Ist-Zeit.</p>
       <p>Urlaub, Krank, Frei und Feiertage (Hessen, automatisch) sind neutral.</p>
       <p>„Gehen um“ erscheint, sobald ein Block gestartet, aber noch nicht beendet ist, und enthält fehlende Pflichtpausen.</p>
+      <p>Mixed Mode: Das Symbol vor jedem Block zeigt, wo du gearbeitet hast – Haus = Homeoffice, Gebäude = Büro. Antippen wechselt. Sobald ein Block im Büro liegt, ist „Im Büro“ an und die Wegezeit wird einmal pro Tag gutgeschrieben.</p>
+      <p>Geplante TAZ- und Urlaubstage kannst du im Verlauf über den Chip „geplant“ als genehmigt markieren. Über „Zeitraum eintragen“ trägst du mehrere Tage auf einmal ein – Wochenenden und Feiertage werden übersprungen.</p>
     </div>
     <div class="card" style="display:grid;gap:10px">
       <span class="label">Sicherung</span>
+      <div class="remind" id="bakRemind" hidden></div>
       <button class="btn" id="csvBtn">Alle Tage als CSV kopieren</button>
-      <span class="muted" style="font-size:14px" id="csvMsg">Zum Einfügen in Excel.</span>
+      <span class="muted" style="font-size:14px" id="csvMsg">Zum Einfügen in Excel. Geplante Tage sind als „geplant“ gekennzeichnet und zählen nicht in den Saldo.</span>
       <textarea id="csvOut" hidden readonly style="width:100%;min-height:120px;font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px"></textarea>
       <button class="btn" id="expBtn">Sicherung speichern (JSON)</button>
       <label class="btn" for="impFile" style="text-align:center">Sicherung wiederherstellen …</label>
       <input type="file" id="impFile" accept=".json,application/json" hidden>
+      <span class="muted" style="font-size:14px" id="bakLast" hidden></span>
       <span class="muted" style="font-size:14px" id="bakMsg">Deine Daten liegen nur auf diesem Gerät. Speichere ab und zu eine Sicherung, z. B. in iCloud Drive.</span>
       <button class="btn" id="preBtn" hidden>Stand vor dem Update wiederherstellen</button>
     </div>
-    <div class="ver">Version 2.1 · Oktober 2026</div>
+    <div class="verrow"><span class="ver">Version 2.5 · Oktober 2026</span><button class="verlink" id="ideasBtn">Ideen-Notiz</button></div>
   </section>
 </div>
+
+<!-- v2.5: Zeitraum eintragen -->
+<dialog class="sheet" id="rangeDlg" aria-labelledby="rangeTitle">
+  <h2 id="rangeTitle">Zeitraum eintragen</h2>
+  <div class="seg two" role="group" aria-label="Art" id="rangeArt"><button data-art="Urlaub" aria-pressed="true">Urlaub</button><button data-art="TAZ" aria-pressed="false">TAZ</button></div>
+  <div class="field" style="border-top:0"><label for="rFrom">Von</label><input type="date" id="rFrom"></div>
+  <div class="field"><label for="rTo">Bis</label><input type="date" id="rTo"></div>
+  <div class="preview" id="rPreview"></div>
+  <div class="dlgbtns"><button class="btn" id="rCancel">Abbrechen</button><button class="btn primary" id="rOk">Eintragen</button></div>
+</dialog>
+
+<!-- v2.5: Ideen-Notiz -->
+<dialog class="sheet" id="ideasDlg" aria-labelledby="ideasTitle">
+  <h2 id="ideasTitle">Ideen-Notiz</h2>
+  <textarea id="ideasTxt" placeholder="Funktionswünsche für die nächste Version – eine Idee pro Zeile …"></textarea>
+  <div class="muted" style="font-size:13px;margin-top:6px" id="ideasMsg">Wird automatisch auf diesem Gerät gespeichert und ist in der JSON-Sicherung enthalten.</div>
+  <div class="dlgbtns" style="justify-content:space-between">
+    <button class="btn" id="ideasClear">Liste leeren</button>
+    <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="ideasCopy">Kopieren</button><button class="btn" id="ideasTxtBtn">Als .txt</button><button class="btn primary" id="ideasDone">Fertig</button></span>
+  </div>
+</dialog>
+
+<div class="toast" id="toast" role="status" hidden></div>
 
 <nav class="tabbar" aria-label="Bereiche"><div class="in">
   <button data-tab="heute" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Tag</button>
   <button data-tab="verlauf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Verlauf</button>
-  <button data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Einstellungen</button>
+  <button data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Einstellungen<i class="bdot" id="setDot" hidden></i></button>
 </div></nav>
 
 <script>
@@ -366,8 +424,7 @@ function holidayName(ds){
 
 /* ---------- state ---------- */
 const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, tazMax:6, frei2412:false, max:600 };
-const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), showPlan:(ls.get("azb.showPlan")===true), tab:"heute", mode:"loading", dirty:new Set(), cfgDirty:false };
-let db = null; const ver = {}, timers = {}, saving = {}; let cfgTimer = null, cfgSaving = null;
+const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), showPlan:(ls.get("azb.showPlan")===true), tab:"heute", mode:"loading" };
 
 const getDay = ds => (S.months[ds.slice(0,7)]||{})[ds] || null;
 function allDates(){ const out=[]; for(const k in S.months) for(const ds in S.months[k]) out.push(ds); return out.sort(); }
@@ -430,53 +487,56 @@ function tazStatus(ds){
   return { y, max, taken, planned, rest: Math.max(0, max - taken - planned), over: Math.max(0, taken + planned - max) };
 }
 
-/* ---------- speichern ---------- */
-function setSync(kind, text){
-  $("syncDot").className = "dot " + (kind||"");
-  $("syncLabel").textContent = text;
+/* ---------- v2.5: Mixed Mode Büro/Homeoffice ----------
+   Ein Block kann ein drittes Element tragen: "b" = Büro, "h" = Homeoffice. Fehlt es, gilt der Tages-Schalter
+   „Im Büro“ (w > 0 → Büro, sonst Homeoffice). Die Wegezeit bleibt ein fester Wert pro Tag (Feld w). */
+const dayDefMode = day => ((day && day.w) || 0) > 0 ? "b" : "h";
+const blockMode = (day, x) => (x && (x[2] === "b" || x[2] === "h")) ? x[2] : dayDefMode(day);
+const isMixed = day => !!(day && day.b && day.b.some(x => x[2] === "b" || x[2] === "h"));
+/* Setzt die Orte aller Blöcke und koppelt den Tages-Schalter: mind. ein Büro-Block → Wegezeit an, sonst aus.
+   Stimmen alle Blöcke mit dem Schalter überein, wird kein drittes Element gespeichert (Format wie bisher). */
+function applyModes(day, modes){
+  const anyB = modes.includes("b");
+  if(anyB && !(day.w > 0)) day.w = S.cfg.wege || 10;
+  if(!anyB && day.w > 0) delete day.w;
+  const def = dayDefMode(day), uniform = modes.every(m => m === def);
+  day.b.forEach((x, j) => { if(uniform) x.splice(2); else x[2] = modes[j]; });
 }
-function mutateDay(ds, fn){
+const modeIcon = (m, nr) => m === "b"
+  ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5.5 21V3.5h13V21"/><path d="M3 21h18"/><path d="M8.5 6.5h1.5M14 6.5h1.5"/><text x="12" y="16.6" text-anchor="middle">'+nr+'</text></svg>'
+  : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M2.5 11.5 12 3.5l9.5 8"/><path d="M5 9.6V20.5h14V9.6"/><text x="12" y="17.6" text-anchor="middle">'+nr+'</text></svg>';
+/* Blöcke als Text; an gemischten Tagen mit Ort je Block */
+function blocksText(day, sep, dash, open){
+  const mixed = isMixed(day);
+  return (day.b||[]).map(x => (x[0]||"?") + dash + (x[1]||open) + (mixed ? (blockMode(day, x) === "b" ? " Büro" : " HO") : "")).join(sep);
+}
+
+/* ---------- v2.5: Genehmigung geplanter TAZ-/Urlaubstage (Feld g = Datum der Genehmigung) ---------- */
+const APPR = ["TAZ","Urlaub"];
+
+/* ---------- speichern (nur auf diesem Gerät) ---------- */
+/* v2.5: Die nie aktive Cloud-Speicherung (Claude-Konto) ist entfernt. Alles liegt in localStorage „azb.local“. */
+function persist(){
+  let ok = true;
+  try { localStorage.setItem("azb.local", JSON.stringify({months:S.months, cfg:S.cfg})); } catch(e){ ok = false; }
+  showBanner(ok ? "" : "Speichern auf diesem Gerät ist fehlgeschlagen (Speicher voll oder privater Modus). Bitte eine Sicherung speichern.");
+  return ok;
+}
+/* Ändert einen Tag. Leere Tage werden entfernt. Unbekannte Felder bleiben unverändert erhalten. */
+function changeDay(ds, fn){
   const k = ds.slice(0,7);
   const month = { ...(S.months[k]||{}) };
   const day = JSON.parse(JSON.stringify(month[ds] || {}));
   if(!day.b) day.b = [];
   fn(day);
-  const empty = !day.b.length && !day.art && !day.w && !day.n;
   if(!day.b.length) delete day.b;
+  const empty = !Object.keys(day).length;
   if(empty) delete month[ds]; else month[ds] = day;
   S.months[k] = month;
-  ver[k] = (ver[k]||0) + 1; S.dirty.add(k);
-  if(!db){ S.dirty.delete(k); ls.set("azb.local", {months:S.months, cfg:S.cfg}); }
-  else { clearTimeout(timers[k]); timers[k] = setTimeout(() => flushMonth(k), 450); }
-  render();
 }
-async function flushMonth(k){
-  if(!db){ S.dirty.delete(k); ls.set("azb.local", {months:S.months, cfg:S.cfg}); return; }
-  while(saving[k]) await saving[k];
-  const v = ver[k];
-  setSync("", "Speichere …");
-  saving[k] = db.doc("months/"+k).set({ days: S.months[k] || {} })
-    .then(() => { if(ver[k] === v) S.dirty.delete(k); setSync("ok", "Gespeichert in deinem Claude-Konto"); })
-    .catch(e => { setSync("err", "Speichern fehlgeschlagen – bitte neu laden"); showBanner("Deine letzte Änderung konnte nicht gespeichert werden. Lade die Seite neu und prüfe den Tag."); })
-    .finally(() => { saving[k] = null; });
-  await saving[k];
-}
-function mutateCfg(patch){
-  S.cfg = { ...S.cfg, ...patch }; S.cfgDirty = true;
-  if(!db){ S.cfgDirty = false; ls.set("azb.local", {months:S.months, cfg:S.cfg}); }
-  else { clearTimeout(cfgTimer); cfgTimer = setTimeout(flushCfg, 500); }
-  render();
-}
-async function flushCfg(){
-  if(!db){ S.cfgDirty = false; ls.set("azb.local", {months:S.months, cfg:S.cfg}); return; }
-  while(cfgSaving) await cfgSaving;
-  const snap = { ...S.cfg };
-  cfgSaving = db.doc("config/main").set(snap)
-    .then(() => { if(JSON.stringify(snap) === JSON.stringify(S.cfg)) S.cfgDirty = false; setSync("ok", "Gespeichert in deinem Claude-Konto"); })
-    .catch(() => setSync("err", "Speichern fehlgeschlagen – bitte neu laden"))
-    .finally(() => { cfgSaving = null; });
-  await cfgSaving;
-}
+function mutateDay(ds, fn){ changeDay(ds, fn); persist(); render(); }
+function mutateDays(list, fn){ list.forEach(ds => changeDay(ds, fn)); persist(); render(); }
+function mutateCfg(patch){ S.cfg = { ...S.cfg, ...patch }; persist(); render(); }
 function showBanner(t){ const b = $("banner"); b.textContent = t; b.hidden = !t; }
 
 /* ---------- render: Tag ---------- */
@@ -539,9 +599,15 @@ function renderHeute(full){
   /* art + holiday */
   $("holiday").hidden = !c.hol; $("holiday").textContent = c.hol ? "Feiertag: " + c.hol + " (neutral, Soll 0)" : "";
   document.querySelectorAll("#seg button").forEach(btn => btn.setAttribute("aria-pressed", String((c.day.art||"Arbeit") === btn.dataset.art)));
+  const showAppr = APPR.includes(c.typ) && !c.weekend && (ds > today || !!c.day.g);
+  $("apprInfo").hidden = !showAppr;
+  if(showAppr) $("apprInfo").innerHTML = '<span>Genehmigung Führungskraft</span>' + (c.day.g
+    ? '<span class="chip ok">✓ genehmigt</span>' : '<span class="chip plan">noch offen</span>');
 
   /* blocks – nicht neu bauen, während ein Feld bearbeitet wird */
   const bl = $("blocks");
+  const showMode = c.typ === "Arbeit" || c.wege > 0;
+  $("modeHint").hidden = !showMode || !(c.day.b||[]).length;
   if(full !== false && !bl.contains(document.activeElement)){
     const raw = c.day.b || [];
     let html = "";
@@ -552,7 +618,11 @@ function renderHeute(full){
       }
       const s = toMin(x[0]), e = toMin(x[1]);
       const bad = s!=null && e!=null && e <= s;
-      html += '<div class="brow'+(bad?" bad":"")+'"><span class="n">'+(i+1)+'</span>'+
+      const m = blockMode(c.day, x);
+      const first = showMode
+        ? '<button class="mode '+m+'" data-mode="'+i+'" aria-label="Block '+(i+1)+': '+(m==="b"?"Büro – antippen für Homeoffice":"Homeoffice – antippen für Büro")+'">'+modeIcon(m, i+1)+'</button>'
+        : '<span class="n plain">'+(i+1)+'</span>';
+      html += '<div class="brow'+(bad?" bad":"")+'">'+first+
         '<input type="time" id="b'+i+'s" data-i="'+i+'" data-k="0" value="'+esc(x[0]||"")+'" aria-label="Block '+(i+1)+' Start">'+
         '<span class="dash">–</span>'+
         '<input type="time" id="b'+i+'e" data-i="'+i+'" data-k="1" value="'+esc(x[1]||"")+'" aria-label="Block '+(i+1)+' Ende">'+
@@ -633,20 +703,24 @@ function renderVerlauf(){
   if(!keys.length){ $("months").innerHTML = '<div class="card muted">Noch keine Tage erfasst. Stempel auf der Seite „Tag“ ein oder trag deine Blöcke dort ein.</div>'; return; }
   const rowHtml = r => {
     const c = r.c, wd = WD[parseISO(r.d).getDay()];
-    const times = (c.day.b||[]).map(x => (x[0]||"?") + "–" + (x[1]||"…")).join(" · ");
+    const times = blocksText(c.day, " · ", "–", "…");
     const missing = c.diff == null;
-    let chip = r.plan ? '<span class="chip plan">geplant</span>' : "";
+    const canAppr = APPR.includes(c.typ) && !c.weekend;
+    let chip = "";
+    if(canAppr && c.day.g) chip = '<button class="chip ok chipbtn" data-appr="'+r.d+'" aria-label="Genehmigt – antippen zum Zurücknehmen">✓ genehmigt</button>';
+    else if(canAppr && r.plan) chip = '<button class="chip plan chipbtn" data-appr="'+r.d+'" aria-label="Geplant – antippen, wenn die Führungskraft genehmigt hat">geplant</button>';
+    else if(r.plan) chip = '<span class="chip plan">geplant</span>';
     if(c.typ !== "Arbeit") chip += '<span class="chip '+(c.typ==="TAZ"?"info":"plain")+'">'+esc(c.hol||(c.typ==="TAZ" && !c.weekend ? "TAZ "+tazNr(r.d) : c.typ))+'</span>';
     if(tazOver(r.d)) chip += '<span class="chip neg">über Limit</span>';
     if(c.level === "neg") chip += '<span class="chip neg">'+esc(c.check)+'</span>';
     if(c.open != null) chip += '<span class="chip info">läuft</span>';
-    const t = [times, c.wege ? "Büro +" + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
+    const t = [times, c.wege ? (isMixed(c.day) ? "Wegezeit +" : "Büro +") + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
     const rCls = missing ? "muted" : r.plan ? "" : (c.diff < 0 ? "neg" : "pos");
-    return '<button class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+(r.plan?" plan":"")+'" data-go="'+r.d+'">' +
+    return '<div role="button" tabindex="0" class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+(r.plan?" plan":"")+'" data-go="'+r.d+'">' +
       '<span class="d">'+wd+" "+dmy(r.d)+chip+'</span>' +
       '<span class="r '+rCls+'">'+(missing?"–":signed(c.diff))+'</span>' +
       '<span class="t">'+(missing ? (r.d < today ? "keine Einträge" : "") : (t || (r.plan ? "" : dur(c.ist))))+'</span>' +
-      '<span class="s">'+(missing?"":(r.plan?"voraussichtlich ":"Saldo ")+signed(r.s))+'</span></button>';
+      '<span class="s">'+(missing?"":(r.plan?"voraussichtlich ":"Saldo ")+signed(r.s))+'</span></div>';
   };
   $("months").innerHTML = keys.map(k => {
     const g = groups[k], booked = g.filter(r => !r.plan), planned = g.filter(r => r.plan);
@@ -679,6 +753,7 @@ function renderSet(){
   put("cSign", c.startSaldo < 0 ? "-1" : "1");
   put("cSH", Math.floor(Math.abs(c.startSaldo)/60)); put("cSM", pad(Math.abs(c.startSaldo)%60));
   put("cStich", c.stichtag || ""); put("cTaz", c.tazVorher || 0); put("cTazMax", tazMax());
+  renderIdeasBtn();
   $("cFrei").checked = !!c.frei2412;
 }
 
@@ -686,6 +761,7 @@ function render(full){
   if(S.tab === "heute") renderHeute(full);
   if(S.tab === "verlauf" && full !== false) renderVerlauf();
   if(S.tab === "set") renderSet();
+  renderBackup();
 }
 
 /* ---------- events ---------- */
@@ -717,7 +793,10 @@ $("stamp").onclick = () => {
 };
 $("seg").addEventListener("click", e => {
   const b = e.target.closest("button[data-art]"); if(!b) return;
-  mutateDay(S.date, day => { if(b.dataset.art === "Arbeit") delete day.art; else day.art = b.dataset.art; });
+  mutateDay(S.date, day => {
+    if((day.art || "Arbeit") !== b.dataset.art) delete day.g;   /* Genehmigung gilt nur für die genehmigte Art */
+    if(b.dataset.art === "Arbeit") delete day.art; else day.art = b.dataset.art;
+  });
 });
 $("blocks").addEventListener("change", e => {
   const inp = e.target; if(inp.dataset.i == null) return;
@@ -727,7 +806,18 @@ $("blocks").addEventListener("change", e => {
 $("blocks").addEventListener("focusout", () => { setTimeout(() => { if(!$("blocks").contains(document.activeElement)) render(); }, 0); });
 $("blocks").addEventListener("click", e => {
   const del = e.target.closest("[data-del]");
-  if(del){ const i = +del.dataset.del; mutateDay(S.date, day => { day.b.splice(i, 1); }); return; }
+  if(del){ del.blur(); const i = +del.dataset.del; mutateDay(S.date, day => {
+    const mixed = isMixed(day), modes = day.b.map(x => blockMode(day, x));
+    day.b.splice(i, 1); modes.splice(i, 1);
+    if(mixed && day.b.length) applyModes(day, modes);
+  }); return; }
+  const mb = e.target.closest("[data-mode]");
+  if(mb){ mb.blur(); const i = +mb.dataset.mode; mutateDay(S.date, day => {
+    while(day.b.length <= i) day.b.push(["",""]);
+    const modes = day.b.map(x => blockMode(day, x));
+    modes[i] = modes[i] === "b" ? "h" : "b";
+    applyModes(day, modes);
+  }); return; }
   if(e.target.id === "addBlock"){
     const raw = (getDay(S.date) || {}).b || [];
     if(raw.length && !raw[raw.length-1][0] && !raw[raw.length-1][1]) return;
@@ -735,9 +825,24 @@ $("blocks").addEventListener("click", e => {
     setTimeout(() => { const n = (getDay(S.date).b||[]).length - 1; const el = $("b"+n+"s"); if(el) el.focus(); }, 0);
   }
 });
-$("extern").onchange = e => mutateDay(S.date, day => { if(e.target.checked) day.w = S.cfg.wege || 10; else delete day.w; });
+/* Tages-Schalter: an → alle Blöcke Büro, aus → alle Blöcke Homeoffice */
+$("extern").onchange = e => mutateDay(S.date, day => { if(e.target.checked) day.w = S.cfg.wege || 10; else delete day.w; day.b.forEach(x => x.splice(2)); });
 $("note").addEventListener("change", e => mutateDay(S.date, day => { const v = e.target.value.trim(); if(v) day.n = v; else delete day.n; }));
-$("months").addEventListener("click", e => { const r = e.target.closest("[data-go]"); if(r){ S.date = r.dataset.go; go("heute"); } });
+$("months").addEventListener("click", e => {
+  const a = e.target.closest("[data-appr]");
+  if(a){
+    const ds = a.dataset.appr, day = getDay(ds) || {}, art = day.art || "Arbeit";
+    if(day.g){
+      if(!confirm("Genehmigung für " + art + " am " + dmy(ds) + ds.slice(0,4) + " zurücknehmen?")) return;
+      mutateDay(ds, d => { delete d.g; }); toast(art + " am " + dmy(ds) + " wieder offen");
+    } else { mutateDay(ds, d => { d.g = todayISO(); }); toast(art + " am " + dmy(ds) + " genehmigt"); }
+    return;
+  }
+  const r = e.target.closest("[data-go]"); if(r){ S.date = r.dataset.go; go("heute"); }
+});
+$("months").addEventListener("keydown", e => {
+  if((e.key === "Enter" || e.key === " ") && e.target.matches("[data-go]")){ e.preventDefault(); S.date = e.target.dataset.go; go("heute"); }
+});
 
 /* Einstellungen */
 $("cSoll").onchange = e => { const m = toMin(e.target.value); if(m) mutateCfg({ soll:m }); };
@@ -748,29 +853,37 @@ $("cStich").onchange = e => mutateCfg({ stichtag: e.target.value || "" });
 $("cTaz").onchange = e => mutateCfg({ tazVorher: Math.max(0, parseInt(e.target.value,10) || 0) });
 $("cTazMax").onchange = e => { const v = parseInt(e.target.value,10); mutateCfg({ tazMax: Number.isFinite(v) && v >= 0 ? v : 6 }); };
 $("cFrei").onchange = e => mutateCfg({ frei2412: e.target.checked });
+/* v2.5: Spalte „Status“ (gebucht/geplant). Die Spalte „Saldo“ enthält nur gebuchte Tage;
+   geplante Tage stehen in „Saldo voraussichtlich“ und verfälschen den Saldo nicht. */
+function buildCSV(){
+  const today = todayISO(), q = v => String(v).replace(/[;\r\n]+/g, ",");
+  let s = S.cfg.startSaldo, nPlan = 0;
+  const lines = ["Datum;Tag;Status;Art;Blöcke;Wegezeit Büro;Pausen;Ist;Soll;Diff;Saldo;Saldo voraussichtlich;Genehmigt;Notiz"];
+  allDates().filter(inRange).forEach(d => { const c = compute(d), plan = d > today; if(c.diff != null) s += c.diff; if(plan) nPlan++;
+    const sal = signed(s).replace("−","-"), appr = APPR.includes(c.typ) && !c.weekend ? (c.day.g ? "ja" : (plan ? "nein" : "")) : "";
+    lines.push([dmy(d)+d.slice(0,4), WD[parseISO(d).getDay()], plan ? "geplant" : "gebucht", c.typ, blocksText(c.day, " ", "-", ""), dur(c.wege), dur(c.pauses), dur(c.ist), dur(c.soll),
+      c.diff==null?"":signed(c.diff).replace("−","-"), plan ? "" : sal, plan ? sal : "", appr, q(c.day.n||"")].join(";")); });
+  return { txt: lines.join("\n"), n: lines.length - 1, nPlan };
+}
 $("csvBtn").onclick = () => {
-  let s = S.cfg.startSaldo;
-  const lines = ["Datum;Tag;Art;Blöcke;Wegezeit Büro;Pausen;Ist;Soll;Diff;Saldo;Notiz"];
-  allDates().filter(inRange).forEach(d => { const c = compute(d); if(c.diff != null) s += c.diff;
-    lines.push([dmy(d)+d.slice(0,4), WD[parseISO(d).getDay()], c.typ, (c.day.b||[]).map(x => (x[0]||"")+"-"+(x[1]||"")).join(" "), dur(c.wege), dur(c.pauses), dur(c.ist), dur(c.soll), c.diff==null?"":signed(c.diff).replace("−","-"), signed(s).replace("−","-"), (c.day.n||"").replace(/;/g,",")].join(";")); });
-  const txt = lines.join("\n"), out = $("csvOut");
+  const { txt, n, nPlan } = buildCSV(), out = $("csvOut");
   out.value = txt; out.hidden = false;
   try {
-    navigator.clipboard.writeText(txt).then(() => { $("csvMsg").textContent = "Kopiert – " + (lines.length-1) + " Tage. In Excel einfügen."; },
+    navigator.clipboard.writeText(txt).then(() => { $("csvMsg").textContent = "Kopiert – " + n + " Tage" + (nPlan ? " (davon " + nPlan + " geplant)" : "") + ". In Excel einfügen."; },
       () => { out.select(); $("csvMsg").textContent = "Text unten markiert – kopiere ihn manuell."; });
   } catch(e){ out.select(); $("csvMsg").textContent = "Text unten markiert – kopiere ihn manuell."; }
 };
 
 /* Sicherung */
 $("expBtn").onclick = async () => {
-  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:2, exported:new Date().toISOString(), cfg:S.cfg, months:S.months }, null, 1);
+  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:2, exported:new Date().toISOString(), cfg:S.cfg, months:S.months, ideas:getIdeas() }, null, 1);
   const name = "arbeitszeit-sicherung-" + todayISO() + ".json";
   try {
     const file = new File([txt], name, { type:"application/json" });
-    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); $("bakMsg").textContent = "Sicherung erstellt."; return; }
+    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); markBackup(); $("bakMsg").textContent = "Sicherung erstellt."; return; }
   } catch(e){ if(e && e.name === "AbortError") return; }
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type:"application/json" })); a.download = name;
-  document.body.appendChild(a); a.click(); a.remove(); $("bakMsg").textContent = "Sicherung heruntergeladen.";
+  document.body.appendChild(a); a.click(); a.remove(); markBackup(); $("bakMsg").textContent = "Sicherung heruntergeladen.";
 };
 $("impFile").onchange = e => {
   const f = e.target.files && e.target.files[0]; if(!f) return;
@@ -782,6 +895,7 @@ $("impFile").onchange = e => {
       if(!confirm("Sicherung vom " + (d.exported||"?").slice(0,10) + " laden? Die aktuellen Daten auf diesem Gerät werden ersetzt.")) return;
       S.months = d.months; S.cfg = { ...DEF, ...d.cfg };
       ls.set("azb.local", { months:S.months, cfg:S.cfg });
+      if(typeof d.ideas === "string") setIdeas(d.ideas);   /* ältere Sicherungen ohne Ideen lassen die Notiz unverändert */
       $("bakMsg").textContent = "Sicherung geladen."; render();
     } catch(err){ $("bakMsg").textContent = "Die Datei ist keine gültige Sicherung dieser App."; }
     e.target.value = "";
@@ -789,8 +903,132 @@ $("impFile").onchange = e => {
   r.readAsText(f);
 };
 
+/* ---------- v2.5: Sicherungs-Erinnerung (azb.lastBackup = Zeitpunkt der letzten JSON-Sicherung) ---------- */
+const BACKUP_DAYS = 30;
+function markBackup(){ ls.set("azb.lastBackup", new Date().toISOString()); renderBackup(); }
+function backupAge(){
+  const t = ls.get("azb.lastBackup"); if(!t) return null;
+  const d = new Date(t); if(isNaN(d)) return null;
+  return Math.floor((parseISO(todayISO()) - parseISO(iso(d))) / 864e5);
+}
+function renderBackup(){
+  const age = backupAge(), hasData = allDates().length > 0;
+  const due = hasData && (age == null || age > BACKUP_DAYS);
+  $("setDot").hidden = !due;
+  $("bakRemind").hidden = !due;
+  if(due) $("bakRemind").textContent = age == null ? "Noch keine Sicherung mit Version 2.5 gespeichert – speichere jetzt eine." : "Letzte Sicherung vor " + age + " Tagen – Zeit für eine neue.";
+  const t = ls.get("azb.lastBackup");
+  $("bakLast").textContent = t ? "Letzte Sicherung: " + dmy(iso(new Date(t))) + new Date(t).getFullYear() + (age === 0 ? " (heute)" : age === 1 ? " (gestern)" : " (vor " + age + " Tagen)") : "";
+  $("bakLast").hidden = !t;
+}
+
+/* ---------- v2.5: Ideen-Notiz (azb.ideas, Text) ---------- */
+function getIdeas(){ try { return localStorage.getItem("azb.ideas") || ""; } catch(e){ return ""; } }
+function setIdeas(v){ try { if(v) localStorage.setItem("azb.ideas", v); else localStorage.removeItem("azb.ideas"); } catch(e){} renderIdeasBtn(); }
+function renderIdeasBtn(){
+  const n = getIdeas().split("\n").filter(l => l.trim()).length;
+  $("ideasBtn").textContent = "Ideen-Notiz" + (n ? " (" + n + ")" : "");
+}
+$("ideasBtn").onclick = () => { $("ideasTxt").value = getIdeas(); $("ideasMsg").textContent = "Wird automatisch auf diesem Gerät gespeichert und ist in der JSON-Sicherung enthalten."; $("ideasDlg").showModal(); };
+$("ideasTxt").addEventListener("input", e => setIdeas(e.target.value));
+$("ideasDone").onclick = () => $("ideasDlg").close();
+$("ideasCopy").onclick = () => {
+  const v = getIdeas(); if(!v.trim()){ $("ideasMsg").textContent = "Die Liste ist leer."; return; }
+  const fallback = () => { $("ideasTxt").select(); $("ideasMsg").textContent = "Text markiert – kopiere ihn manuell."; };
+  try { navigator.clipboard.writeText(v).then(() => { $("ideasMsg").textContent = "Kopiert."; }, fallback); } catch(e){ fallback(); }
+};
+$("ideasTxtBtn").onclick = async () => {
+  const v = getIdeas(); if(!v.trim()){ $("ideasMsg").textContent = "Die Liste ist leer."; return; }
+  const name = "arbeitszeit-ideen-" + todayISO() + ".txt";
+  try {
+    const file = new File([v], name, { type:"text/plain" });
+    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); $("ideasMsg").textContent = "Als .txt geteilt."; return; }
+  } catch(e){ if(e && e.name === "AbortError") return; }
+  const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([v], { type:"text/plain;charset=utf-8" })); a.download = name;
+  document.body.appendChild(a); a.click(); a.remove(); $("ideasMsg").textContent = "Als .txt gespeichert.";
+};
+$("ideasClear").onclick = () => {
+  if(!getIdeas().trim()) return;
+  if(!confirm("Ideen-Notiz wirklich leeren? Das lässt sich nicht rückgängig machen.")) return;
+  setIdeas(""); $("ideasTxt").value = ""; $("ideasMsg").textContent = "Liste geleert.";
+};
+
+/* ---------- v2.5: Zeitraum eintragen (Urlaub/TAZ von–bis) ---------- */
+const R = { art:"Urlaub" };
+function isWorkday(ds){ const w = parseISO(ds).getDay(); return w !== 0 && w !== 6 && !holidayName(ds); }
+function nextWorkday(ds){ let d = addDays(ds, 1); while(!isWorkday(d)) d = addDays(d, 1); return d; }
+function rangePlan(){
+  const from = $("rFrom").value, to = $("rTo").value, art = R.art;
+  const res = { ok:false, set:[], same:0, changed:0, busy:[], skipWe:0, skipHol:[], tazYears:{} };
+  if(!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return res;
+  if(to < from){ res.err = "„Bis“ liegt vor „Von“."; return res; }
+  if(parseISO(to) - parseISO(from) > 366 * 864e5){ res.err = "Höchstens ein Jahr auf einmal."; return res; }
+  for(let d = from; d <= to; d = addDays(d, 1)){
+    const w = parseISO(d).getDay();
+    if(w === 0 || w === 6){ res.skipWe++; continue; }
+    const h = holidayName(d); if(h){ res.skipHol.push(h); continue; }
+    const day = getDay(d) || {}, has = (day.b||[]).some(x => x[0] || x[1]) || day.w > 0;
+    if(has){ res.busy.push(d); continue; }                       /* Tage mit Zeiten bleiben unangetastet */
+    if((day.art || "Arbeit") === art){ res.same++; continue; }
+    if(day.art) res.changed++;
+    res.set.push(d);
+  }
+  if(art === "TAZ"){
+    res.set.forEach(d => { const y = d.slice(0,4); if(inRange(d)) res.tazYears[y] = (res.tazYears[y]||0) + 1; });
+  }
+  res.ok = res.set.length > 0;
+  return res;
+}
+function renderRange(){
+  document.querySelectorAll("#rangeArt button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.art === R.art)));
+  const r = rangePlan(), p = [];
+  if(r.err) p.push('<div class="warn">' + esc(r.err) + '</div>');
+  else {
+    const n = r.set.length;
+    p.push('<div><b>' + n + '</b> ' + (n === 1 ? "Arbeitstag wird" : "Arbeitstage werden") + ' als ' + esc(R.art) + ' eingetragen' +
+      (n ? ' (' + dmy(r.set[0]) + (n > 1 ? '–' + dmy(r.set[n-1]) : '') + ')' : '') + '.</div>');
+    const skip = [];
+    if(r.skipWe) skip.push(r.skipWe + (r.skipWe === 1 ? " Wochenendtag" : " Wochenendtage"));
+    if(r.skipHol.length) skip.push(r.skipHol.length + (r.skipHol.length === 1 ? " Feiertag (" : " Feiertage (") + esc(r.skipHol.join(", ")) + ")");
+    if(skip.length) p.push('<div>Übersprungen: ' + skip.join(" · ") + '</div>');
+    if(r.same) p.push('<div>' + r.same + (r.same === 1 ? " Tag ist" : " Tage sind") + ' schon als ' + esc(R.art) + ' eingetragen.</div>');
+    if(r.changed) p.push('<div>' + r.changed + (r.changed === 1 ? " Tag hatte" : " Tage hatten") + ' eine andere Art und wird umgestellt.</div>');
+    if(r.busy.length) p.push('<div class="warn">' + r.busy.length + (r.busy.length === 1 ? " Tag hat" : " Tage haben") + ' schon Zeiten und ' + (r.busy.length === 1 ? "bleibt" : "bleiben") + ' unverändert: ' + r.busy.map(dmy).join(", ") + '</div>');
+    for(const y in r.tazYears){
+      const total = tazVorherIn(y) + tazDates(y).length + r.tazYears[y];
+      if(total > tazMax()) p.push('<div class="warn">Damit wären es ' + total + ' TAZ in ' + y + ' – erlaubt sind ' + tazMax() + '. Was darüber liegt, zählt nur als Gleitzeit.</div>');
+      else p.push('<div>Danach: <b>' + total + '</b> von ' + tazMax() + ' TAZ in ' + y + '.</div>');
+    }
+  }
+  $("rPreview").innerHTML = p.join("");
+  $("rOk").disabled = !r.ok;
+}
+$("rangeBtn").onclick = () => {
+  const today = todayISO(), start = S.date > today && isWorkday(S.date) ? S.date : nextWorkday(today);
+  $("rFrom").value = start; $("rTo").value = start; renderRange(); $("rangeDlg").showModal();
+};
+$("rangeArt").addEventListener("click", e => { const b = e.target.closest("button[data-art]"); if(b){ R.art = b.dataset.art; renderRange(); } });
+$("rFrom").addEventListener("change", () => { if($("rTo").value < $("rFrom").value) $("rTo").value = $("rFrom").value; renderRange(); });
+$("rTo").addEventListener("change", renderRange);
+$("rCancel").onclick = () => $("rangeDlg").close();
+$("rOk").onclick = () => {
+  const r = rangePlan(); if(!r.ok) return;
+  const art = R.art;
+  mutateDays(r.set, day => { if((day.art || "Arbeit") !== art) delete day.g; day.art = art; });
+  $("rangeDlg").close();
+  const planned = r.set.some(d => d > todayISO());
+  if(planned && !S.showPlan){ S.showPlan = true; ls.set("azb.showPlan", true); renderVerlauf(); }
+  toast(r.set.length + (r.set.length === 1 ? " Tag" : " Tage") + " als " + art + " eingetragen");
+};
+
+/* ---------- Hinweis unten ---------- */
+let toastT = null;
+function toast(t){ const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 3200); }
+
+/* neueste Sicherheitskopie zuerst */
+const PRE_KEYS = ["azb.pre-v2.5", "azb.pre-v2.1", "azb.pre-v2"];
 $("preBtn").onclick = () => {
-  const pre = ls.get("azb.pre-v2.1") || ls.get("azb.pre-v2"); if(!pre || !pre.data) return;
+  const key = PRE_KEYS.find(k => ls.get(k)), pre = key && ls.get(key); if(!pre || !pre.data) return;
   if(!confirm("Stand vom " + String(pre.saved||"?").slice(0,10) + " (vor dem Update) wiederherstellen? Einträge, die du seitdem gemacht hast, gehen verloren.")) return;
   try {
     const d = JSON.parse(pre.data);
@@ -818,13 +1056,14 @@ render();
     if(raw && !localStorage.getItem("azb.pre-v2")) localStorage.setItem("azb.pre-v2", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
     /* v2.1: gleiche Sicherheitskopie für den Stand vor Version 2.1 */
     if(raw && !localStorage.getItem("azb.pre-v2.1")) localStorage.setItem("azb.pre-v2.1", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
+    /* v2.5: gleiche Sicherheitskopie für den Stand vor Version 2.5 */
+    if(raw && !localStorage.getItem("azb.pre-v2.5")) localStorage.setItem("azb.pre-v2.5", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
   } catch(e){}
   const loc = ls.get("azb.local") || FIRST_RUN;
   S.months = loc.months || {}; S.cfg = { ...DEF, ...(loc.cfg||{}) };
   ls.set("azb.local", { months:S.months, cfg:S.cfg });
   S.mode = "local";
-  setSync("local", "Auf diesem Gerät gespeichert");
-  try { $("preBtn").hidden = !(localStorage.getItem("azb.pre-v2.1") || localStorage.getItem("azb.pre-v2")); } catch(e){}
+  try { $("preBtn").hidden = !PRE_KEYS.some(k => localStorage.getItem(k)); } catch(e){}
   try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
   render();
 })();
