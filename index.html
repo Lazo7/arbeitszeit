@@ -51,7 +51,7 @@ button{cursor:pointer}
 .num{font-family:var(--font-num);font-variant-numeric:tabular-nums;letter-spacing:.01em}
 .muted{color:var(--muted)}
 .label{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.view{display:grid;gap:14px}
+.view{display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
 .sync{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
 .dot{width:8px;height:8px;border-radius:50%;background:var(--muted)}
@@ -60,6 +60,18 @@ button{cursor:pointer}
 /* date nav */
 .datenav{display:flex;align-items:center;gap:8px}
 .datenav h1{flex:1;min-width:0;margin:0;font-family:var(--font-num);font-weight:600;font-size:24px;line-height:1.1;text-wrap:balance}
+/* v2.1: feste Positionen ‹ · Datum · Kalender · Heute · › – nichts wird ein- oder ausgeblendet */
+#v-heute .datenav{gap:5px;min-width:0}
+#v-heute .datenav h1{font-size:clamp(19px,5.6vw,24px);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#v-heute .datenav h1 small{overflow:hidden;text-overflow:ellipsis;font-size:12px;letter-spacing:0}
+.wds{display:none}
+@media (max-width:374px){.wdl{display:none}.wds{display:inline}#v-heute .datenav{gap:4px}#v-heute .datenav h1{font-size:19px;letter-spacing:0}}
+#v-heute .datenav .pill{padding:6px 10px;flex:none}
+#v-heute .datenav .iconbtn{flex:none}
+.calbtn{position:relative;color:var(--accent-text);overflow:hidden}
+.calbtn svg{width:20px;height:20px;pointer-events:none}
+.calbtn input{position:absolute;inset:0;width:100%;height:100%;margin:0;padding:0;border:0;opacity:0;cursor:pointer;-webkit-appearance:none;appearance:none;font-size:16px}
+.pill:disabled{border-color:var(--line);color:var(--muted);opacity:.55;cursor:default}
 .datenav h1 small{display:block;font-family:var(--font-body);font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.02em}
 .iconbtn{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);background:var(--surface);display:grid;place-items:center;font-size:20px;line-height:1}
 .pill{border:1px solid var(--accent-text);background:var(--surface);color:var(--accent-text);border-radius:999px;padding:6px 12px;font-size:14px;font-weight:600}
@@ -114,7 +126,7 @@ button{cursor:pointer}
 .pos{color:var(--pos)} .neg{color:var(--neg)}
 .chip{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px}
 .chip.pos{background:var(--pos-bg);color:var(--pos)} .chip.neg{background:var(--neg-bg);color:var(--neg)} .chip.info{background:var(--info-bg);color:var(--info)} .chip.plain{background:var(--surface-2);color:var(--muted)}
-.konto{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:8px;align-items:end}
+.konto{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end}
 .konto .v{font-family:var(--font-num);font-size:24px;font-weight:600}
 .konto .v.xl{font-size:34px}
 .sechead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}
@@ -148,6 +160,18 @@ button{cursor:pointer}
 .drow.today{background:var(--accent-soft)}
 .drow.missing .d{color:var(--muted);font-weight:400}
 .mhead.cur{box-shadow:inset 4px 0 0 var(--accent)}
+/* v2.1: gebucht (eingetreten) vs. geplant (Zukunft) */
+.planbar{padding:6px 14px}
+.dsep{padding:6px 14px;font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--muted);border-top:1px solid var(--line);background:var(--bg)}
+.mhead + .dsep{border-top:0}
+.dsep.plan{color:var(--accent-text);background:var(--accent-soft)}
+.drow.plan{border-left:3px dashed var(--accent);padding-left:11px}
+.drow.plan .d{font-weight:500}
+.drow.plan .r,.drow.plan .s{color:var(--muted)}
+.chip.plan{background:var(--accent-soft);color:var(--accent-text);box-shadow:inset 0 0 0 1px var(--accent)}
+.mplan{font-size:14px;color:var(--accent-text)}
+.mplan b{font-family:var(--font-num);font-size:16px}
+.mhead.fut{box-shadow:inset 4px 0 0 var(--accent-soft)}
 
 /* Einstellungen */
 .field{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
@@ -183,8 +207,9 @@ button{cursor:pointer}
     <div class="datenav">
       <button class="iconbtn" id="prev" aria-label="Vorheriger Tag">‹</button>
       <h1 id="dtitle">–</h1>
-      <button class="iconbtn" id="next" aria-label="Nächster Tag">›</button>
+      <span class="iconbtn calbtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg><input type="date" id="pickDate" aria-label="Datum wählen"></span>
       <button class="pill" id="todayBtn">Heute</button>
+      <button class="iconbtn" id="next" aria-label="Nächster Tag">›</button>
     </div>
 
     <div class="card hero" id="hero">
@@ -248,6 +273,10 @@ button{cursor:pointer}
   <!-- VERLAUF -->
   <section id="v-verlauf" class="view" aria-label="Verlauf" hidden>
     <div class="datenav"><h1>Verlauf<small>Tippe auf einen Tag, um ihn zu bearbeiten</small></h1></div>
+    <div class="card planbar"><div class="line">
+      <span>Geplante Tage zeigen<span class="sub2" id="planHint"></span></span>
+      <label class="switch"><input type="checkbox" id="showPlan" aria-label="Geplante Tage zeigen"><span></span></label>
+    </div></div>
     <div id="months" class="view"></div>
   </section>
 
@@ -283,7 +312,7 @@ button{cursor:pointer}
       <span class="muted" style="font-size:14px" id="bakMsg">Deine Daten liegen nur auf diesem Gerät. Speichere ab und zu eine Sicherung, z. B. in iCloud Drive.</span>
       <button class="btn" id="preBtn" hidden>Stand vor dem Update wiederherstellen</button>
     </div>
-    <div class="ver">Version 2 · Oktober 2026</div>
+    <div class="ver">Version 2.1 · Oktober 2026</div>
   </section>
 </div>
 
@@ -337,7 +366,7 @@ function holidayName(ds){
 
 /* ---------- state ---------- */
 const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, tazMax:6, frei2412:false, max:600 };
-const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), tab:"heute", mode:"loading", dirty:new Set(), cfgDirty:false };
+const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), showPlan:(ls.get("azb.showPlan")===true), tab:"heute", mode:"loading", dirty:new Set(), cfgDirty:false };
 let db = null; const ver = {}, timers = {}, saving = {}; let cfgTimer = null, cfgSaving = null;
 
 const getDay = ds => (S.months[ds.slice(0,7)]||{})[ds] || null;
@@ -454,8 +483,11 @@ function showBanner(t){ const b = $("banner"); b.textContent = t; b.hidden = !t;
 function renderHeute(full){
   const ds = S.date, today = todayISO(), isToday = ds === today;
   const d = parseISO(ds);
-  $("dtitle").innerHTML = esc(dmy(ds)+d.getFullYear()) + "<small>"+ esc(isToday ? "Heute · "+WDL[d.getDay()] : WDL[d.getDay()]) +"</small>";
-  $("todayBtn").hidden = isToday;
+  const wdHtml = '<span class="wdl">' + WDL[d.getDay()] + '</span><span class="wds">' + WD[d.getDay()] + '.</span>';
+  $("dtitle").innerHTML = esc(dmy(ds)+d.getFullYear()) + "<small>" + (isToday ? "Heute · " : "") + wdHtml + "</small>";
+  $("todayBtn").disabled = isToday;
+  $("todayBtn").setAttribute("aria-label", isToday ? "Heute (bereits ausgewählt)" : "Zu heute springen");
+  if(document.activeElement !== $("pickDate")) $("pickDate").value = ds;
   const c = compute(ds, isToday);
   const liveOpen = isToday && c.open != null;
   const saldo = liveOpen ? saldoBis(addDays(ds, -1)) + (inRange(ds) ? c.liveIst - c.soll : 0) : saldoBis(ds);
@@ -574,6 +606,13 @@ function renderHeute(full){
 }
 
 /* ---------- render: Verlauf ---------- */
+/* v2.1: „gebucht“ = bis einschließlich heute, „geplant“ = danach.
+   Geplante Tage sind standardmäßig ausgeblendet. Der Monatskopf rechnet immer nur mit gebuchten Tagen. */
+const PLAN_NAME = { TAZ:["TAZ","TAZ"], Urlaub:["Urlaub","Urlaub"], Krank:["Krank","Krank"], Frei:["Frei","Frei"], Feiertag:["Feiertag","Feiertage"], Arbeit:["Arbeitstag","Arbeitstage"] };
+function planSummary(list){
+  const cnt = {}; list.forEach(r => { cnt[r.c.typ] = (cnt[r.c.typ]||0) + 1; });
+  return ["TAZ","Urlaub","Krank","Frei","Arbeit","Feiertag"].filter(t => cnt[t]).map(t => "<b>"+cnt[t]+"</b> "+(PLAN_NAME[t][cnt[t]===1?0:1])).join(" · ");
+}
 function renderVerlauf(){
   const today = todayISO();
   const set = new Set(allDates().filter(inRange));
@@ -582,38 +621,52 @@ function renderVerlauf(){
   for(let d = start; d <= today; d = addDays(d, 1)){ const w = parseISO(d).getDay(); if(w !== 0 && w !== 6) set.add(d); }
   const dates = [...set].sort();
   let s = S.cfg.startSaldo;
-  const rows = dates.map(d => { const c = compute(d); if(c.diff != null) s += c.diff; return { d, c, s }; });
+  const rows = dates.map(d => { const c = compute(d); if(c.diff != null) s += c.diff; return { d, c, s, plan: d > today }; });
+  const nPlan = rows.filter(r => r.plan).length;
+  $("showPlan").checked = S.showPlan;
+  $("planHint").textContent = !nPlan ? "Keine Tage nach heute eingetragen"
+    : (nPlan === 1 ? "1 Tag" : nPlan + " Tage") + " nach heute eingetragen" + (S.showPlan ? "" : " – ausgeblendet");
+  const visible = S.showPlan ? rows : rows.filter(r => !r.plan);
   const groups = {};
-  rows.forEach(r => { const k = r.d.slice(0,7); (groups[k] = groups[k] || []).push(r); });
+  visible.forEach(r => { const k = r.d.slice(0,7); (groups[k] = groups[k] || []).push(r); });
   const keys = Object.keys(groups).sort().reverse();
   if(!keys.length){ $("months").innerHTML = '<div class="card muted">Noch keine Tage erfasst. Stempel auf der Seite „Tag“ ein oder trag deine Blöcke dort ein.</div>'; return; }
+  const rowHtml = r => {
+    const c = r.c, wd = WD[parseISO(r.d).getDay()];
+    const times = (c.day.b||[]).map(x => (x[0]||"?") + "–" + (x[1]||"…")).join(" · ");
+    const missing = c.diff == null;
+    let chip = r.plan ? '<span class="chip plan">geplant</span>' : "";
+    if(c.typ !== "Arbeit") chip += '<span class="chip '+(c.typ==="TAZ"?"info":"plain")+'">'+esc(c.hol||(c.typ==="TAZ" && !c.weekend ? "TAZ "+tazNr(r.d) : c.typ))+'</span>';
+    if(tazOver(r.d)) chip += '<span class="chip neg">über Limit</span>';
+    if(c.level === "neg") chip += '<span class="chip neg">'+esc(c.check)+'</span>';
+    if(c.open != null) chip += '<span class="chip info">läuft</span>';
+    const t = [times, c.wege ? "Büro +" + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
+    const rCls = missing ? "muted" : r.plan ? "" : (c.diff < 0 ? "neg" : "pos");
+    return '<button class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+(r.plan?" plan":"")+'" data-go="'+r.d+'">' +
+      '<span class="d">'+wd+" "+dmy(r.d)+chip+'</span>' +
+      '<span class="r '+rCls+'">'+(missing?"–":signed(c.diff))+'</span>' +
+      '<span class="t">'+(missing ? (r.d < today ? "keine Einträge" : "") : (t || (r.plan ? "" : dur(c.ist))))+'</span>' +
+      '<span class="s">'+(missing?"":(r.plan?"voraussichtlich ":"Saldo ")+signed(r.s))+'</span></button>';
+  };
   $("months").innerHTML = keys.map(k => {
-    const g = groups[k];
+    const g = groups[k], booked = g.filter(r => !r.plan), planned = g.filter(r => r.plan);
     let ist=0, soll=0, diff=0, taz=0, url=0, kr=0; const curM = k === today.slice(0,7);
-    g.forEach(r => { if(r.c.diff != null){ ist += r.c.ist; soll += r.c.soll; diff += r.c.diff; }
+    booked.forEach(r => { if(r.c.diff != null){ ist += r.c.ist; soll += r.c.soll; diff += r.c.diff; }
       if(r.c.typ === "TAZ") taz++; if(r.c.typ === "Urlaub") url++; if(r.c.typ === "Krank") kr++; });
-    const end = g[g.length-1].s;
-    const head = '<div class="mhead'+(curM?" cur":"")+'"><h2>' + MON[+k.slice(5,7)-1] + " " + k.slice(0,4) + '</h2><div class="mstats">' +
-      '<span>Ist <b>'+dur(ist)+'</b></span><span>Soll <b>'+dur(soll)+'</b></span>' +
-      '<span>Diff <b class="'+(diff<0?"neg":"pos")+'">'+signed(diff)+'</b></span><span>Saldo <b>'+signed(end)+'</b></span>' +
-      (taz ? '<span>TAZ <b>'+taz+'</b></span>' : "") + (url ? '<span>Urlaub <b>'+url+'</b></span>' : "") + (kr ? '<span>Krank <b>'+kr+'</b></span>' : "") +
-      '</div></div>';
-    const body = g.slice().reverse().map(r => {
-      const c = r.c, wd = WD[parseISO(r.d).getDay()];
-      const times = (c.day.b||[]).map(x => (x[0]||"?") + "–" + (x[1]||"…")).join(" · ");
-      const missing = c.diff == null;
-      let chip = "";
-      if(c.typ !== "Arbeit") chip = '<span class="chip '+(c.typ==="TAZ"?"info":"plain")+'">'+esc(c.hol||(c.typ==="TAZ" && !c.weekend ? "TAZ "+tazNr(r.d) : c.typ))+'</span>';
-      if(tazOver(r.d)) chip += '<span class="chip neg">über Limit</span>';
-      if(c.level === "neg") chip += '<span class="chip neg">'+esc(c.check)+'</span>';
-      if(c.open != null) chip += '<span class="chip info">läuft</span>';
-      const t = [times, c.wege ? "Büro +" + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
-      return '<button class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+'" data-go="'+r.d+'">' +
-        '<span class="d">'+wd+" "+dmy(r.d)+chip+'</span>' +
-        '<span class="r '+(missing?"muted":(c.diff<0?"neg":"pos"))+'">'+(missing?"–":signed(c.diff))+'</span>' +
-        '<span class="t">'+(missing ? (r.d < today ? "keine Einträge" : "") : (t || dur(c.ist)))+'</span>' +
-        '<span class="s">'+(missing?"":"Saldo "+signed(r.s))+'</span></button>';
-    }).join("");
+    let stats = "";
+    if(booked.length){
+      const end = booked[booked.length-1].s;
+      stats = '<div class="mstats">' +
+        '<span>Ist <b>'+dur(ist)+'</b></span><span>Soll <b>'+dur(soll)+'</b></span>' +
+        '<span>Diff <b class="'+(diff<0?"neg":"pos")+'">'+signed(diff)+'</b></span><span>Saldo <b>'+signed(end)+'</b></span>' +
+        (taz ? '<span>TAZ <b>'+taz+'</b></span>' : "") + (url ? '<span>Urlaub <b>'+url+'</b></span>' : "") + (kr ? '<span>Krank <b>'+kr+'</b></span>' : "") +
+        '</div>';
+    }
+    if(planned.length) stats += '<div class="mplan">Geplant: ' + planSummary(planned) + ' · <span class="nw">voraussichtlich <b>' + signed(planned[planned.length-1].s) + '</b></span></div>';
+    const head = '<div class="mhead'+(curM?" cur":"")+(!booked.length?" fut":"")+'"><h2>' + MON[+k.slice(5,7)-1] + " " + k.slice(0,4) + '</h2>' + stats + '</div>';
+    const both = booked.length && planned.length;
+    const body = (both ? '<div class="dsep plan">Geplant</div>' : "") + planned.slice().reverse().map(rowHtml).join("") +
+                 (both ? '<div class="dsep">Gebucht</div>' : "") + booked.slice().reverse().map(rowHtml).join("");
     return '<div class="card month">' + head + body + '</div>';
   }).join("");
 }
@@ -646,6 +699,11 @@ document.querySelectorAll(".tabbar button").forEach(b => b.addEventListener("cli
 $("prev").onclick = () => { S.date = addDays(S.date, -1); render(); };
 $("next").onclick = () => { S.date = addDays(S.date, 1); render(); };
 $("todayBtn").onclick = () => { S.date = todayISO(); render(); };
+/* Kalender: unsichtbares Datumsfeld liegt über dem Button (öffnet auf dem iPhone die normale Datumsauswahl) */
+$("pickDate").addEventListener("click", e => { try { if(matchMedia("(pointer:fine)").matches && e.target.showPicker) e.target.showPicker(); } catch(err){} });
+$("pickDate").addEventListener("change", e => { const v = e.target.value; if(/^\d{4}-\d{2}-\d{2}$/.test(v) && v !== S.date){ S.date = v; render(); } });
+$("pickDate").addEventListener("blur", () => render(false));
+$("showPlan").onchange = e => { S.showPlan = e.target.checked; ls.set("azb.showPlan", S.showPlan); renderVerlauf(); };
 $("wishMinus").onclick = () => { S.wish -= 15; ls.set("azb.wish", S.wish); render(false); };
 $("wishPlus").onclick = () => { S.wish += 15; ls.set("azb.wish", S.wish); render(false); };
 
@@ -732,7 +790,7 @@ $("impFile").onchange = e => {
 };
 
 $("preBtn").onclick = () => {
-  const pre = ls.get("azb.pre-v2"); if(!pre || !pre.data) return;
+  const pre = ls.get("azb.pre-v2.1") || ls.get("azb.pre-v2"); if(!pre || !pre.data) return;
   if(!confirm("Stand vom " + String(pre.saved||"?").slice(0,10) + " (vor dem Update) wiederherstellen? Einträge, die du seitdem gemacht hast, gehen verloren.")) return;
   try {
     const d = JSON.parse(pre.data);
@@ -758,13 +816,15 @@ render();
   try {
     const raw = localStorage.getItem("azb.local");
     if(raw && !localStorage.getItem("azb.pre-v2")) localStorage.setItem("azb.pre-v2", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
+    /* v2.1: gleiche Sicherheitskopie für den Stand vor Version 2.1 */
+    if(raw && !localStorage.getItem("azb.pre-v2.1")) localStorage.setItem("azb.pre-v2.1", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
   } catch(e){}
   const loc = ls.get("azb.local") || FIRST_RUN;
   S.months = loc.months || {}; S.cfg = { ...DEF, ...(loc.cfg||{}) };
   ls.set("azb.local", { months:S.months, cfg:S.cfg });
   S.mode = "local";
   setSync("local", "Auf diesem Gerät gespeichert");
-  try { $("preBtn").hidden = !localStorage.getItem("azb.pre-v2"); } catch(e){}
+  try { $("preBtn").hidden = !(localStorage.getItem("azb.pre-v2.1") || localStorage.getItem("azb.pre-v2")); } catch(e){}
   try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
   render();
 })();
