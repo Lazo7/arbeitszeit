@@ -100,11 +100,11 @@ button{cursor:pointer}
 .blocks{display:grid;gap:8px}
 .brow{display:grid;grid-template-columns:auto minmax(0,1fr) auto minmax(0,1fr) auto;align-items:center;gap:6px}
 .brow .n{font-size:13px;font-weight:600;color:var(--muted);width:18px}
-.brow input[type=time]{width:100%;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 6px;font-family:var(--font-num);font-size:20px;text-align:center;-webkit-appearance:none;appearance:none;min-height:44px}
+.brow input[type=time]{width:100%;min-width:0;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px 3px;font-family:var(--font-num);font-size:19px;text-align:center;-webkit-appearance:none;appearance:none;min-height:44px}
 .brow.bad input{border-color:var(--neg)}
 .brow .dash{color:var(--muted)}
 .brow .del{width:36px;height:36px;border-radius:10px;border:0;background:transparent;color:var(--muted);font-size:20px}
-.gap{font-size:13px;color:var(--muted);padding-left:40px}
+.gap{font-size:13px;color:var(--muted);padding-left:66px}
 .addb{border:1px dashed var(--line);background:transparent;border-radius:10px;padding:10px;font-weight:600;color:var(--accent-text)}
 .line{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px}
 .line + .line{border-top:1px solid var(--line)}
@@ -154,6 +154,14 @@ button{cursor:pointer}
 .drow:first-of-type{border-top:0}
 .drow .d{font-weight:600;display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
 .drow .t{font-size:13px;color:var(--muted);min-width:0;overflow-wrap:anywhere}
+/* v2.7: Chips stehen klein in der zweiten Zeile, Datum und Diff bleiben oben allein */
+.drow .t .chip{font-size:11px;font-weight:600;padding:1px 7px;line-height:1.45;margin:1px 4px 1px 0;vertical-align:1px}
+.whead{display:grid;grid-template-columns:1fr auto;gap:1px 10px;padding:8px 14px;background:var(--bg);border-top:1px solid var(--line)}
+.whead .k{font-weight:700;font-size:15px}
+.whead .k span,.whead .w2,.whead .ws{font-size:13px;font-weight:400;color:var(--muted)}
+.whead .wd{text-align:right;font-family:var(--font-num);font-size:16px;font-weight:600;font-variant-numeric:tabular-nums}
+.whead .ws{text-align:right;font-variant-numeric:tabular-nums}
+.whead .w2 b{color:var(--fg);font-family:var(--font-num);font-weight:600}
 .drow .r{text-align:right;font-family:var(--font-num);font-size:18px;font-variant-numeric:tabular-nums}
 .drow .s{text-align:right;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
 .drow.today{background:var(--accent-soft)}
@@ -194,13 +202,17 @@ button{cursor:pointer}
 .tabbar button[aria-current="page"]{color:var(--accent-text)}
 .tabbar button[aria-current="page"]::before{content:"";position:absolute;top:-7px;left:25%;right:25%;height:3px;border-radius:0 0 3px 3px;background:var(--accent)}
 .banner{font-size:14px;background:var(--info-bg);color:var(--info);border-radius:10px;padding:10px 12px}
-/* v2.5: Block-Symbol Haus (Homeoffice) / Bürogebäude (Büro) mit Blocknummer */
-.mode{width:34px;height:42px;border:0;background:transparent;padding:0;display:grid;place-items:center;border-radius:10px;color:var(--muted)}
-.mode svg{width:32px;height:32px;pointer-events:none}
-.mode text{font-family:var(--font-num);font-weight:700;font-size:8.5px;fill:currentColor;stroke:none}
+/* v2.7: Blocknummer im Quadrat links, daneben Haus (Homeoffice) / Bürogebäude (Büro) */
+.mode{height:44px;border:0;background:transparent;padding:0 2px;display:flex;align-items:center;gap:3px;border-radius:10px;color:var(--muted)}
+.mode svg{width:30px;height:30px;pointer-events:none;flex:none}
 .mode.b{color:var(--accent-text)}
 .mode:active{background:var(--surface-2)}
-.brow .n.plain{width:34px;text-align:center}
+.bnr{display:inline-grid;place-items:center;width:22px;height:22px;flex:none;border-radius:6px;border:1.5px solid currentColor;font-family:var(--font-num);font-size:13px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.bnr.plain{color:var(--muted);margin-right:35px}
+.bdur{font-size:13px;color:var(--muted);padding-left:66px;margin-top:-4px;font-variant-numeric:tabular-nums}
+.bdur.neg{color:var(--neg);font-weight:600}
+.brow input[type=time]::-webkit-calendar-picker-indicator{display:none}
+@media (max-width:360px){.mode svg{width:26px;height:26px}.bnr{width:20px;height:20px;font-size:12px}.bnr.plain{margin-right:29px}.brow{gap:4px}.brow input[type=time]{font-size:17px;padding:8px 2px}.brow .del{width:28px}.gap,.bdur{padding-left:56px}}
 .modehint{font-size:13px;color:var(--muted)}
 /* v2.5: Genehmigung */
 .chipbtn{border:0;font-family:var(--font-body);cursor:pointer;position:relative;line-height:1.4}
@@ -221,7 +233,23 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
 .tabbar button .bdot{position:absolute;top:6px;left:calc(50% + 8px);width:8px;height:8px;border-radius:50%;background:var(--accent)}
 .verrow{display:flex;justify-content:center;align-items:baseline;flex-wrap:wrap;gap:4px 14px}
 .verlink{border:0;background:transparent;padding:4px 2px;margin:-4px -2px;font:inherit;font-size:13px;color:var(--accent-text);text-decoration:underline dotted;text-underline-offset:3px}
-#ideasTxt{width:100%;min-height:220px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;font:inherit;font-size:16px;resize:vertical}
+#ideasTxt{width:100%;height:min(56dvh,520px);min-height:200px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:10px;font:inherit;font-size:16px;line-height:1.45;resize:vertical}
+/* v2.7: Requests */
+.reqmeta{font-size:13px;margin:-6px 0 8px}
+.reqitems{display:grid;max-height:min(56dvh,520px);overflow:auto;border:1px solid var(--line);border-radius:10px}
+.reqitem{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;border-top:1px solid var(--line)}
+.reqitem:first-child{border-top:0}
+.reqtxt{border:0;background:transparent;text-align:left;padding:10px 12px;display:grid;gap:4px;min-width:0}
+.reqtxt .tx{white-space:pre-wrap;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden}
+.reqtxt .dt{font-size:13px;color:var(--muted)}
+.reqitem .del{width:40px;height:40px;margin:4px 4px 0 0;border-radius:10px;border:0;background:transparent;color:var(--muted);font-size:20px}
+.reqempty{padding:14px 12px;color:var(--muted);font-size:14px}
+.warnlist{margin:0;padding-left:18px;display:grid;gap:8px;font-size:15px}
+.stackbtns{display:grid;gap:8px;margin-top:14px}
+.twobtns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.addreq{width:100%;margin-bottom:10px}
+.threebtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
+.threebtns .btn{padding:10px 6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:9;background:var(--dark);color:var(--dark-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;max-width:calc(100vw - 32px);box-shadow:0 4px 16px rgba(0,0,0,.25)}
 @media (max-width:380px){.hero .big{font-size:54px}.stat .v{font-size:21px}.seg button{font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -306,6 +334,9 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
     <div class="card planbar"><div class="line">
       <span>Geplante Tage zeigen<span class="sub2" id="planHint"></span></span>
       <label class="switch"><input type="checkbox" id="showPlan" aria-label="Geplante Tage zeigen"><span></span></label>
+    </div><div class="line">
+      <span>Wochensummen zeigen<span class="sub2">Ist, Soll, Diff und Saldo je Kalenderwoche</span></span>
+      <label class="switch"><input type="checkbox" id="showWeek" aria-label="Wochensummen zeigen"><span></span></label>
     </div></div>
     <button class="btn rangebtn" id="rangeBtn">+ Zeitraum eintragen (Urlaub / TAZ)</button>
     <div id="months" class="view"></div>
@@ -322,6 +353,8 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
       <div class="field"><label for="cStich">Stichtag <small>Saldo gilt am Ende dieses Tages</small></label><input type="date" id="cStich"></div>
       <div class="field"><label for="cTazMax">TAZ-Tage pro Jahr <small>Höchstens so viele ganze Tage aus dem Gleitzeitkonto</small></label><input type="number" id="cTazMax" min="0" max="60" inputmode="numeric"></div>
       <div class="field"><label for="cTaz">TAZ im Startjahr schon genommen <small>vor dem Stichtag</small></label><input type="number" id="cTaz" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label for="cRv">Rahmenzeit von <small>Arbeit vor dieser Uhrzeit löst eine Rückfrage aus</small></label><input type="time" id="cRv"></div>
+      <div class="field"><label for="cRb">Rahmenzeit bis <small>Arbeit nach dieser Uhrzeit löst eine Rückfrage aus</small></label><input type="time" id="cRb"></div>
       <div class="field"><label for="cFrei">Heiligabend &amp; Silvester frei</label><label class="switch"><input type="checkbox" id="cFrei"><span></span></label></div>
     </div>
     <div class="card help">
@@ -331,7 +364,8 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
       <p>„Im Büro“ schreibt dir die feste Wegezeit gut – für den Weg auf dem Gelände und im Gebäude sowie den Aufbau deines Laptops am Shared Desk. Die Minuten zählen zur Ist-Zeit.</p>
       <p>Urlaub, Krank, Frei und Feiertage (Hessen, automatisch) sind neutral.</p>
       <p>„Gehen um“ erscheint, sobald ein Block gestartet, aber noch nicht beendet ist, und enthält fehlende Pflichtpausen.</p>
-      <p>Mixed Mode: Das Symbol vor jedem Block zeigt, wo du gearbeitet hast – Haus = Homeoffice, Gebäude = Büro. Antippen wechselt. Sobald ein Block im Büro liegt, ist „Im Büro“ an und die Wegezeit wird einmal pro Tag gutgeschrieben.</p>
+      <p>Mixed Mode: Das Symbol neben der Blocknummer zeigt, wo du gearbeitet hast – Haus = Homeoffice, Gebäude = Büro. Antippen wechselt. Sobald ein Block im Büro liegt, ist „Im Büro“ an und die Wegezeit wird einmal pro Tag gutgeschrieben.</p>
+      <p>Rückfrage vor dem Speichern: Liegt ein Ende vor dem Start, überschneiden sich Blöcke, dauert ein Block über 6 h, fehlt Pflichtpause, sind es über 10 h oder liegt Arbeit außerhalb der Rahmenzeit, fragt die App nach – auch beim Stempeln. Bestätigte Fälle werden nicht noch einmal abgefragt.</p>
       <p>Geplante TAZ- und Urlaubstage kannst du im Verlauf über den Chip „geplant“ als genehmigt markieren. Über „Zeitraum eintragen“ trägst du mehrere Tage auf einmal ein – Wochenenden und Feiertage werden übersprungen.</p>
     </div>
     <div class="card" style="display:grid;gap:10px">
@@ -347,7 +381,7 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
       <span class="muted" style="font-size:14px" id="bakMsg">Deine Daten liegen nur auf diesem Gerät. Speichere ab und zu eine Sicherung, z. B. in iCloud Drive.</span>
       <button class="btn" id="preBtn" hidden>Stand vor dem Update wiederherstellen</button>
     </div>
-    <div class="verrow"><span class="ver">Version 2.5 · Oktober 2026</span><button class="verlink" id="ideasBtn">Ideen-Notiz</button></div>
+    <div class="verrow"><span class="ver">Version 2.7 · Oktober 2026</span><button class="verlink" id="ideasBtn">Ideen-Notiz</button></div>
   </section>
 </div>
 
@@ -361,15 +395,32 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
   <div class="dlgbtns"><button class="btn" id="rCancel">Abbrechen</button><button class="btn primary" id="rOk">Eintragen</button></div>
 </dialog>
 
-<!-- v2.5: Ideen-Notiz -->
+<!-- v2.7: Ideen-Notiz als einzelne Requests -->
 <dialog class="sheet" id="ideasDlg" aria-labelledby="ideasTitle">
-  <h2 id="ideasTitle">Ideen-Notiz</h2>
-  <textarea id="ideasTxt" placeholder="Funktionswünsche für die nächste Version – eine Idee pro Zeile …"></textarea>
-  <div class="muted" style="font-size:13px;margin-top:6px" id="ideasMsg">Wird automatisch auf diesem Gerät gespeichert und ist in der JSON-Sicherung enthalten.</div>
-  <div class="dlgbtns" style="justify-content:space-between">
-    <button class="btn" id="ideasClear">Liste leeren</button>
-    <span style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="ideasCopy">Kopieren</button><button class="btn" id="ideasTxtBtn">Als .txt</button><button class="btn primary" id="ideasDone">Fertig</button></span>
+  <div id="reqEdit">
+    <h2 id="ideasTitle">Neuer Request</h2>
+    <div class="muted reqmeta" id="reqMeta" hidden></div>
+    <textarea id="ideasTxt" placeholder="Deine Idee – so ausführlich du willst …" aria-label="Text des Requests"></textarea>
+    <div class="muted" style="font-size:13px;margin-top:6px" id="ideasMsg"></div>
+    <div class="stackbtns">
+      <button class="btn" id="reqListBtn">Abgegebene Requests</button>
+      <div class="twobtns"><button class="btn" id="ideasDone">Schließen</button><button class="btn primary" id="reqSave">Speichern</button></div>
+    </div>
   </div>
+  <div id="reqList" hidden>
+    <h2>Abgegebene Requests</h2>
+    <button class="addb addreq" id="reqNew">+ Neuer Request</button>
+    <div class="reqitems" id="reqItems"></div>
+    <div class="muted" style="font-size:13px;margin-top:6px" id="reqMsg"></div>
+    <div class="threebtns"><button class="btn" id="ideasCopy">Kopieren</button><button class="btn" id="ideasTxtBtn">Als .txt</button><button class="btn primary" id="reqClose">Fertig</button></div>
+  </div>
+</dialog>
+
+<!-- v2.7: Rückfrage bei unzulässiger Eingabe -->
+<dialog class="sheet" id="warnDlg" aria-labelledby="warnTitle">
+  <h2 id="warnTitle">Bitte prüfen</h2>
+  <ul class="warnlist" id="warnList"></ul>
+  <div class="stackbtns"><button class="btn primary" id="warnNo" autofocus>Korrigieren</button><button class="btn" id="warnYes">Trotzdem speichern</button></div>
 </dialog>
 
 <div class="toast" id="toast" role="status" hidden></div>
@@ -424,14 +475,14 @@ function holidayName(ds){
 
 /* ---------- state ---------- */
 const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, tazMax:6, frei2412:false, max:600 };
-const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), showPlan:(ls.get("azb.showPlan")===true), tab:"heute", mode:"loading" };
+const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), showPlan:(ls.get("azb.showPlan")===true), showWeek:(ls.get("azb.showWeek")!==false), tab:"heute", mode:"loading" };
 
 const getDay = ds => (S.months[ds.slice(0,7)]||{})[ds] || null;
 function allDates(){ const out=[]; for(const k in S.months) for(const ds in S.months[k]) out.push(ds); return out.sort(); }
 
 /* ---------- Rechenkern ---------- */
-function compute(ds, live){
-  const day = getDay(ds) || {};
+function compute(ds, live, dayOv){
+  const day = dayOv || getDay(ds) || {};
   const b = (day.b||[]).map(x => [toMin(x[0]), toMin(x[1])]);
   let closed=0, pauses=0, maxBlock=0, open=null, prevEnd=null, any=false;
   b.forEach(([s,e], i) => {
@@ -502,9 +553,11 @@ function applyModes(day, modes){
   const def = dayDefMode(day), uniform = modes.every(m => m === def);
   day.b.forEach((x, j) => { if(uniform) x.splice(2); else x[2] = modes[j]; });
 }
-const modeIcon = (m, nr) => m === "b"
-  ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M5.5 21V3.5h13V21"/><path d="M3 21h18"/><path d="M8.5 6.5h1.5M14 6.5h1.5"/><text x="12" y="16.6" text-anchor="middle">'+nr+'</text></svg>'
-  : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M2.5 11.5 12 3.5l9.5 8"/><path d="M5 9.6V20.5h14V9.6"/><text x="12" y="17.6" text-anchor="middle">'+nr+'</text></svg>';
+/* v2.7: Nummer steht links im Quadrat; Piktogramme in feiner Linie (gleiche Stärke wie das Quadrat):
+   Haus mit Satteldach und Tür, Bürogebäude gestuft mit Fensterschlitzen */
+const modeIcon = m => m === "b"
+  ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M4.5 20V8h6V3.5h9V20Z"/><path d="M13.6 7.3v2.2M16.4 7.3v2.2M13.6 12.3v2.2M16.4 12.3v2.2M7.5 11.5v2.2"/></svg>'
+  : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path d="M4.5 20V10.5L12 4.5l7.5 6V20Z"/><path d="M10.2 20v-4.8h3.6V20"/></svg>';
 /* Blöcke als Text; an gemischten Tagen mit Ort je Block */
 function blocksText(day, sep, dash, open){
   const mixed = isMixed(day);
@@ -620,17 +673,19 @@ function renderHeute(full){
       const bad = s!=null && e!=null && e <= s;
       const m = blockMode(c.day, x);
       const first = showMode
-        ? '<button class="mode '+m+'" data-mode="'+i+'" aria-label="Block '+(i+1)+': '+(m==="b"?"Büro – antippen für Homeoffice":"Homeoffice – antippen für Büro")+'">'+modeIcon(m, i+1)+'</button>'
-        : '<span class="n plain">'+(i+1)+'</span>';
+        ? '<button class="mode '+m+'" data-mode="'+i+'" aria-label="Block '+(i+1)+': '+(m==="b"?"Büro – antippen für Homeoffice":"Homeoffice – antippen für Büro")+'"><span class="bnr">'+(i+1)+'</span>'+modeIcon(m)+'</button>'
+        : '<span class="bnr plain">'+(i+1)+'</span>';
       html += '<div class="brow'+(bad?" bad":"")+'">'+first+
         '<input type="time" id="b'+i+'s" data-i="'+i+'" data-k="0" value="'+esc(x[0]||"")+'" aria-label="Block '+(i+1)+' Start">'+
         '<span class="dash">–</span>'+
         '<input type="time" id="b'+i+'e" data-i="'+i+'" data-k="1" value="'+esc(x[1]||"")+'" aria-label="Block '+(i+1)+' Ende">'+
-        '<button class="del" data-del="'+i+'" aria-label="Block '+(i+1)+' löschen">×</button></div>';
+        '<button class="del" data-del="'+i+'" aria-label="Block '+(i+1)+' löschen">×</button></div>'+
+        '<div class="bdur" id="bd'+i+'"></div>';
     });
     html += '<button class="addb" id="addBlock">+ Block hinzufügen</button>';
     bl.innerHTML = html;
   }
+  renderDurs(c, isToday);
   $("checkChip").innerHTML = (c.check ? '<span class="chip '+c.level+'">'+esc(c.check)+'</span>' : "") +
     (tazOver(ds) ? ' <span class="chip neg">TAZ über Limit</span>' : "");
 
@@ -675,9 +730,40 @@ function renderHeute(full){
   $("tazFull").textContent = tazMsg; $("tazFull").hidden = !tazMsg;
 }
 
+/* v2.7: Dauer unter jedem Block; der laufende Block zählt live mit, über 6 h am Stück rot */
+function renderDurs(c, isToday){
+  (c.day.b || []).forEach((x, i) => {
+    const el = $("bd"+i); if(!el) return;
+    const s = toMin(x[0]), e = toMin(x[1]);
+    let t = "", bad = false;
+    if(s != null && e != null){ if(e > s){ t = "Dauer " + dur(e-s); bad = e-s > 360; if(bad) t += " · über 6 h"; } else { t = "Ende liegt vor dem Start"; bad = true; } }
+    else if(s != null){ if(isToday){ const m = Math.max(0, nowMin()-s); t = "läuft " + dur(m); bad = m > 360; if(bad) t += " · über 6 h"; } else t = "Ende fehlt"; }
+    else if(e != null) t = "Start fehlt";
+    el.textContent = t; el.hidden = !t; el.className = "bdur" + (bad ? " neg" : "");
+  });
+}
+
 /* ---------- render: Verlauf ---------- */
 /* v2.1: „gebucht“ = bis einschließlich heute, „geplant“ = danach.
    Geplante Tage sind standardmäßig ausgeblendet. Der Monatskopf rechnet immer nur mit gebuchten Tagen. */
+/* v2.7: Kalenderwoche (ISO, Montag bis Sonntag) */
+const mondayOf = ds => addDays(ds, -((parseISO(ds).getDay() + 6) % 7));
+function isoWeek(ds){
+  const d = parseISO(ds), th = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 3 - ((d.getDay() + 6) % 7));
+  const jan4 = new Date(th.getFullYear(), 0, 4);
+  return 1 + Math.round(((th - jan4) / 864e5 - 3 + ((jan4.getDay() + 6) % 7)) / 7);
+}
+/* Ist = gebuchte Tage, Soll = ganze Woche (Urlaub, Krank, Frei, Feiertage zählen 0), Saldo = nach dem letzten gebuchten Tag */
+function weekStats(m, today, sMap){
+  let ist = 0, soll = 0, booked = false, saldo = null;
+  for(let i = 0; i < 7; i++){
+    const d = addDays(m, i); if(!inRange(d)) continue;
+    const c = compute(d); soll += c.soll;
+    if(d <= today){ booked = true; if(c.diff != null) ist += c.ist; if(sMap[d] != null) saldo = sMap[d]; }
+  }
+  if(saldo == null) saldo = saldoBis(addDays(m, 6) < today ? addDays(m, 6) : today);
+  return { ist, soll, diff: ist - soll, saldo, booked };
+}
 const PLAN_NAME = { TAZ:["TAZ","TAZ"], Urlaub:["Urlaub","Urlaub"], Krank:["Krank","Krank"], Frei:["Frei","Frei"], Feiertag:["Feiertag","Feiertage"], Arbeit:["Arbeitstag","Arbeitstage"] };
 function planSummary(list){
   const cnt = {}; list.forEach(r => { cnt[r.c.typ] = (cnt[r.c.typ]||0) + 1; });
@@ -700,6 +786,29 @@ function renderVerlauf(){
   const groups = {};
   visible.forEach(r => { const k = r.d.slice(0,7); (groups[k] = groups[k] || []).push(r); });
   const keys = Object.keys(groups).sort().reverse();
+  /* v2.7: Wochenkopf über der Woche – im Monat ihres Freitags, über dem neuesten gebuchten Tag */
+  const sMap = {}; rows.forEach(r => { sMap[r.d] = r.s; });
+  const wkAnchor = {};
+  $("showWeek").checked = S.showWeek;
+  if(S.showWeek){
+    const byWeek = {};
+    visible.forEach(r => { const m = mondayOf(r.d); (byWeek[m] = byWeek[m] || []).push(r); });
+    for(const m in byWeek){
+      const list = byWeek[m], fm = addDays(m, 4).slice(0,7);
+      const last = a => a.length ? a[a.length-1].d : null;
+      const bk = list.filter(r => !r.plan), pl = list.filter(r => r.plan);
+      const a = last(bk.filter(r => r.d.startsWith(fm))) || last(bk) || last(pl.filter(r => r.d.startsWith(fm))) || last(pl);
+      if(a) wkAnchor[a] = m;
+    }
+  }
+  const weekHtml = m => {
+    const w = weekStats(m, today, sMap), fri = addDays(m, 4);
+    const range = (m.slice(5,7) === fri.slice(5,7) ? m.slice(8,10) + "." : dmy(m)) + "–" + dmy(fri);
+    const head = '<span class="k">KW ' + isoWeek(m) + ' <span>· ' + range + '</span></span>';
+    if(!w.booked) return '<div class="whead">' + head + '<span class="ws">geplant</span></div>';
+    return '<div class="whead">' + head + '<span class="wd ' + (w.diff < 0 ? "neg" : "pos") + '">' + signed(w.diff) + '</span>' +
+      '<span class="w2">Ist <b>' + dur(w.ist) + '</b> · Soll <b>' + dur(w.soll) + '</b></span><span class="ws">Saldo ' + signed(w.saldo) + '</span></div>';
+  };
   if(!keys.length){ $("months").innerHTML = '<div class="card muted">Noch keine Tage erfasst. Stempel auf der Seite „Tag“ ein oder trag deine Blöcke dort ein.</div>'; return; }
   const rowHtml = r => {
     const c = r.c, wd = WD[parseISO(r.d).getDay()];
@@ -716,10 +825,12 @@ function renderVerlauf(){
     if(c.open != null) chip += '<span class="chip info">läuft</span>';
     const t = [times, c.wege ? (isMixed(c.day) ? "Wegezeit +" : "Büro +") + dur(c.wege) : "", c.day.n ? esc(c.day.n) : ""].filter(Boolean).join(" · ");
     const rCls = missing ? "muted" : r.plan ? "" : (c.diff < 0 ? "neg" : "pos");
-    return '<div role="button" tabindex="0" class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+(r.plan?" plan":"")+'" data-go="'+r.d+'">' +
-      '<span class="d">'+wd+" "+dmy(r.d)+chip+'</span>' +
+    const txt = missing ? (r.d < today ? "keine Einträge" : "") : (t || (r.plan ? "" : dur(c.ist)));
+    return (wkAnchor[r.d] ? weekHtml(wkAnchor[r.d]) : "") +
+      '<div role="button" tabindex="0" class="drow'+(r.d===today?" today":"")+(missing?" missing":"")+(r.plan?" plan":"")+'" data-go="'+r.d+'">' +
+      '<span class="d">'+wd+" "+dmy(r.d)+'</span>' +
       '<span class="r '+rCls+'">'+(missing?"–":signed(c.diff))+'</span>' +
-      '<span class="t">'+(missing ? (r.d < today ? "keine Einträge" : "") : (t || (r.plan ? "" : dur(c.ist))))+'</span>' +
+      '<span class="t">'+chip+(txt ? '<span>'+txt+'</span>' : "")+'</span>' +
       '<span class="s">'+(missing?"":(r.plan?"voraussichtlich ":"Saldo ")+signed(r.s))+'</span></div>';
   };
   $("months").innerHTML = keys.map(k => {
@@ -753,6 +864,7 @@ function renderSet(){
   put("cSign", c.startSaldo < 0 ? "-1" : "1");
   put("cSH", Math.floor(Math.abs(c.startSaldo)/60)); put("cSM", pad(Math.abs(c.startSaldo)%60));
   put("cStich", c.stichtag || ""); put("cTaz", c.tazVorher || 0); put("cTazMax", tazMax());
+  put("cRv", clock(rahmenVon())); put("cRb", clock(rahmenBis()));
   renderIdeasBtn();
   $("cFrei").checked = !!c.frei2412;
 }
@@ -780,16 +892,20 @@ $("pickDate").addEventListener("click", e => { try { if(matchMedia("(pointer:fin
 $("pickDate").addEventListener("change", e => { const v = e.target.value; if(/^\d{4}-\d{2}-\d{2}$/.test(v) && v !== S.date){ S.date = v; render(); } });
 $("pickDate").addEventListener("blur", () => render(false));
 $("showPlan").onchange = e => { S.showPlan = e.target.checked; ls.set("azb.showPlan", S.showPlan); renderVerlauf(); };
+$("showWeek").onchange = e => { S.showWeek = e.target.checked; ls.set("azb.showWeek", S.showWeek); renderVerlauf(); };
 $("wishMinus").onclick = () => { S.wish -= 15; ls.set("azb.wish", S.wish); render(false); };
 $("wishPlus").onclick = () => { S.wish += 15; ls.set("azb.wish", S.wish); render(false); };
 
-$("stamp").onclick = () => {
-  const t = clock(nowMin()), c = compute(S.date);
-  mutateDay(S.date, day => {
+$("stamp").onclick = async () => {
+  const ds = S.date, t = clock(nowMin()), c = compute(ds);
+  const fn = day => {
     const i = day.b.findIndex(x => x[0] && !x[1]);
     if(c.open != null && i >= 0) day.b[i][1] = t;
     else { const empty = day.b.findIndex(x => !x[0] && !x[1]); if(empty >= 0) day.b[empty] = [t, ""]; else day.b.push([t, ""]); }
-  });
+  };
+  const cur = getDay(ds) || {}, next = JSON.parse(JSON.stringify(cur)); if(!next.b) next.b = []; fn(next);
+  if(!await askIssues(dayIssues(ds, cur), dayIssues(ds, next), "Trotzdem stempeln", "Abbrechen")) return;
+  mutateDay(ds, fn);
 };
 $("seg").addEventListener("click", e => {
   const b = e.target.closest("button[data-art]"); if(!b) return;
@@ -798,12 +914,16 @@ $("seg").addEventListener("click", e => {
     if(b.dataset.art === "Arbeit") delete day.art; else day.art = b.dataset.art;
   });
 });
-$("blocks").addEventListener("change", e => {
+$("blocks").addEventListener("change", async e => {
   const inp = e.target; if(inp.dataset.i == null) return;
-  const i = +inp.dataset.i, k = +inp.dataset.k, v = inp.value || "";
-  mutateDay(S.date, day => { while(day.b.length <= i) day.b.push(["",""]); day.b[i][k] = v; });
+  const ds = S.date, i = +inp.dataset.i, k = +inp.dataset.k, v = inp.value || "";
+  const cur = getDay(ds) || {}, old = ((cur.b || [])[i] || [])[k] || "";
+  const fn = day => { while(day.b.length <= i) day.b.push(["",""]); day.b[i][k] = v; };
+  const next = JSON.parse(JSON.stringify(cur)); if(!next.b) next.b = []; fn(next);
+  if(!await askIssues(dayIssues(ds, cur), dayIssues(ds, next), "Trotzdem speichern", "Korrigieren")){ inp.value = old; render(); return; }
+  mutateDay(ds, fn);
 });
-$("blocks").addEventListener("focusout", () => { setTimeout(() => { if(!$("blocks").contains(document.activeElement)) render(); }, 0); });
+$("blocks").addEventListener("focusout", () => { setTimeout(() => { if(!$("warnDlg").open && !$("blocks").contains(document.activeElement)) render(); }, 0); });
 $("blocks").addEventListener("click", e => {
   const del = e.target.closest("[data-del]");
   if(del){ del.blur(); const i = +del.dataset.del; mutateDay(S.date, day => {
@@ -853,6 +973,9 @@ $("cStich").onchange = e => mutateCfg({ stichtag: e.target.value || "" });
 $("cTaz").onchange = e => mutateCfg({ tazVorher: Math.max(0, parseInt(e.target.value,10) || 0) });
 $("cTazMax").onchange = e => { const v = parseInt(e.target.value,10); mutateCfg({ tazMax: Number.isFinite(v) && v >= 0 ? v : 6 }); };
 $("cFrei").onchange = e => mutateCfg({ frei2412: e.target.checked });
+/* v2.7: Rahmenzeit – wird erst gespeichert, wenn sie geändert wird (sonst gilt 6:00–20:00) */
+$("cRv").onchange = e => { const m = toMin(e.target.value); if(m == null) return renderSet(); if(m >= rahmenBis()){ toast("„Von“ muss vor „Bis“ liegen."); return renderSet(); } mutateCfg({ rahmenVon:m }); };
+$("cRb").onchange = e => { const m = toMin(e.target.value); if(m == null) return renderSet(); if(m <= rahmenVon()){ toast("„Bis“ muss nach „Von“ liegen."); return renderSet(); } mutateCfg({ rahmenBis:m }); };
 /* v2.5: Spalte „Status“ (gebucht/geplant). Die Spalte „Saldo“ enthält nur gebuchte Tage;
    geplante Tage stehen in „Saldo voraussichtlich“ und verfälschen den Saldo nicht. */
 function buildCSV(){
@@ -876,7 +999,7 @@ $("csvBtn").onclick = () => {
 
 /* Sicherung */
 $("expBtn").onclick = async () => {
-  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:2, exported:new Date().toISOString(), cfg:S.cfg, months:S.months, ideas:getIdeas() }, null, 1);
+  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:2, exported:new Date().toISOString(), cfg:S.cfg, months:S.months, ideas:getIdeas(), requests:getReqs() }, null, 1);
   const name = "arbeitszeit-sicherung-" + todayISO() + ".json";
   try {
     const file = new File([txt], name, { type:"application/json" });
@@ -896,6 +1019,7 @@ $("impFile").onchange = e => {
       S.months = d.months; S.cfg = { ...DEF, ...d.cfg };
       ls.set("azb.local", { months:S.months, cfg:S.cfg });
       if(typeof d.ideas === "string") setIdeas(d.ideas);   /* ältere Sicherungen ohne Ideen lassen die Notiz unverändert */
+      if(Array.isArray(d.requests)) setReqs(d.requests.filter(x => x && typeof x.t === "string"));   /* v2.7: ältere Sicherungen ohne Requests lassen die Liste unverändert */
       $("bakMsg").textContent = "Sicherung geladen."; render();
     } catch(err){ $("bakMsg").textContent = "Die Datei ist keine gültige Sicherung dieser App."; }
     e.target.value = "";
@@ -916,41 +1040,93 @@ function renderBackup(){
   const due = hasData && (age == null || age > BACKUP_DAYS);
   $("setDot").hidden = !due;
   $("bakRemind").hidden = !due;
-  if(due) $("bakRemind").textContent = age == null ? "Noch keine Sicherung mit Version 2.5 gespeichert – speichere jetzt eine." : "Letzte Sicherung vor " + age + " Tagen – Zeit für eine neue.";
+  if(due) $("bakRemind").textContent = age == null ? "Noch keine Sicherung gespeichert – speichere jetzt eine." : "Letzte Sicherung vor " + age + " Tagen – Zeit für eine neue.";
   const t = ls.get("azb.lastBackup");
   $("bakLast").textContent = t ? "Letzte Sicherung: " + dmy(iso(new Date(t))) + new Date(t).getFullYear() + (age === 0 ? " (heute)" : age === 1 ? " (gestern)" : " (vor " + age + " Tagen)") : "";
   $("bakLast").hidden = !t;
 }
 
-/* ---------- v2.5: Ideen-Notiz (azb.ideas, Text) ---------- */
+/* ---------- v2.5: Ideen-Notiz (azb.ideas, Text) – seit v2.7 nur noch für die Sicherung, nicht mehr sichtbar ---------- */
 function getIdeas(){ try { return localStorage.getItem("azb.ideas") || ""; } catch(e){ return ""; } }
-function setIdeas(v){ try { if(v) localStorage.setItem("azb.ideas", v); else localStorage.removeItem("azb.ideas"); } catch(e){} renderIdeasBtn(); }
-function renderIdeasBtn(){
-  const n = getIdeas().split("\n").filter(l => l.trim()).length;
-  $("ideasBtn").textContent = "Ideen-Notiz" + (n ? " (" + n + ")" : "");
+function setIdeas(v){ try { if(v) localStorage.setItem("azb.ideas", v); else localStorage.removeItem("azb.ideas"); } catch(e){} }
+
+/* ---------- v2.7: Requests (azb.requests = [{ id, t:Text, c:angelegt, u:geändert }], Entwurf in azb.reqDraft) ---------- */
+function getReqs(){ const v = ls.get("azb.requests"); return Array.isArray(v) ? v.filter(x => x && typeof x.t === "string") : []; }
+function setReqs(list){ ls.set("azb.requests", list); renderIdeasBtn(); }
+const fullDate = t => { const d = new Date(t); return isNaN(d) ? "" : pad(d.getDate()) + "." + pad(d.getMonth()+1) + "." + d.getFullYear(); };
+function renderIdeasBtn(){ const n = getReqs().length; $("ideasBtn").textContent = "Ideen-Notiz" + (n ? " (" + n + ")" : ""); }
+const Q = { edit:null, orig:"" };
+function editDirty(){ return Q.edit && $("ideasTxt").value !== Q.orig; }
+function showReqEdit(id, msg){
+  const r = id ? getReqs().find(x => x.id === id) : null;
+  Q.edit = r ? r.id : null;
+  $("reqEdit").hidden = false; $("reqList").hidden = true;
+  $("ideasTitle").textContent = r ? "Request bearbeiten" : "Neuer Request";
+  $("reqMeta").hidden = !r;
+  if(r) $("reqMeta").textContent = "Angelegt am " + fullDate(r.c) + (r.u ? " · geändert am " + fullDate(r.u) : "");
+  $("ideasTxt").value = r ? r.t : (ls.get("azb.reqDraft") || "");
+  Q.orig = $("ideasTxt").value;
+  $("ideasMsg").textContent = msg || (r ? "„Speichern“ überschreibt diesen Request." : "Der Entwurf bleibt erhalten, bis du ihn speicherst.");
+  $("reqListBtn").textContent = "Abgegebene Requests (" + getReqs().length + ")";
 }
-$("ideasBtn").onclick = () => { $("ideasTxt").value = getIdeas(); $("ideasMsg").textContent = "Wird automatisch auf diesem Gerät gespeichert und ist in der JSON-Sicherung enthalten."; $("ideasDlg").showModal(); };
-$("ideasTxt").addEventListener("input", e => setIdeas(e.target.value));
-$("ideasDone").onclick = () => $("ideasDlg").close();
+function showReqList(msg){
+  Q.edit = null;
+  $("reqEdit").hidden = true; $("reqList").hidden = false;
+  const list = getReqs().slice().reverse();
+  $("reqItems").innerHTML = list.length ? list.map(r =>
+    '<div class="reqitem"><button class="reqtxt" data-req="' + esc(r.id) + '"><span class="tx">' + esc(r.t) + '</span><span class="dt">' + fullDate(r.c) + (r.u ? " · geändert " + fullDate(r.u) : "") + '</span></button>' +
+    '<button class="del" data-reqdel="' + esc(r.id) + '" aria-label="Request löschen">×</button></div>').join("")
+    : '<div class="reqempty">Noch keine Requests abgegeben.</div>';
+  $("reqMsg").textContent = msg || (list.length ? "Antippen zum Bearbeiten." : "");
+}
+const leaveEdit = () => !editDirty() || confirm("Änderungen an diesem Request verwerfen?");
+$("ideasBtn").onclick = () => { showReqEdit(null); $("ideasDlg").showModal(); };
+$("ideasTxt").addEventListener("input", e => { if(!Q.edit){ const v = e.target.value; if(v.trim()) ls.set("azb.reqDraft", v); else try { localStorage.removeItem("azb.reqDraft"); } catch(err){} } });
+$("reqSave").onclick = () => {
+  const t = $("ideasTxt").value.replace(/\s+$/, "");
+  if(!t.trim()){ $("ideasMsg").textContent = Q.edit ? "Der Text ist leer. Zum Löschen in der Liste auf × tippen." : "Schreib zuerst deine Idee."; return; }
+  const list = getReqs(), now = new Date().toISOString();
+  if(Q.edit){
+    const r = list.find(x => x.id === Q.edit);
+    if(r && r.t !== t){ r.t = t; r.u = now; setReqs(list); }
+    showReqList("Änderung gespeichert.");
+  } else {
+    list.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), t, c: now });
+    setReqs(list);
+    try { localStorage.removeItem("azb.reqDraft"); } catch(e){}
+    showReqEdit(null, "Request gespeichert. Das Feld ist frei für die nächste Idee.");
+  }
+};
+$("reqListBtn").onclick = () => { if(leaveEdit()) showReqList(); };
+$("reqNew").onclick = () => showReqEdit(null);
+$("ideasDone").onclick = () => { if(leaveEdit()) $("ideasDlg").close(); };
+$("reqClose").onclick = () => $("ideasDlg").close();
+$("ideasDlg").addEventListener("cancel", e => { if(!leaveEdit()) e.preventDefault(); });
+$("reqItems").addEventListener("click", e => {
+  const d = e.target.closest("[data-reqdel]");
+  if(d){
+    if(!confirm("Diesen Request löschen? Das lässt sich nicht rückgängig machen.")) return;
+    setReqs(getReqs().filter(x => x.id !== d.dataset.reqdel)); showReqList("Request gelöscht."); return;
+  }
+  const r = e.target.closest("[data-req]"); if(r) showReqEdit(r.dataset.req);
+});
+function reqsText(){
+  return getReqs().map((r, i) => "Request " + (i+1) + " (" + fullDate(r.c) + (r.u ? ", geändert " + fullDate(r.u) : "") + ")\n" + r.t).join("\n\n");
+}
 $("ideasCopy").onclick = () => {
-  const v = getIdeas(); if(!v.trim()){ $("ideasMsg").textContent = "Die Liste ist leer."; return; }
-  const fallback = () => { $("ideasTxt").select(); $("ideasMsg").textContent = "Text markiert – kopiere ihn manuell."; };
-  try { navigator.clipboard.writeText(v).then(() => { $("ideasMsg").textContent = "Kopiert."; }, fallback); } catch(e){ fallback(); }
+  const v = reqsText(); if(!v){ $("reqMsg").textContent = "Die Liste ist leer."; return; }
+  const fallback = () => { $("reqMsg").textContent = "Kopieren nicht möglich – nutze „Als .txt“."; };
+  try { navigator.clipboard.writeText(v).then(() => { $("reqMsg").textContent = "Alle Requests kopiert."; }, fallback); } catch(e){ fallback(); }
 };
 $("ideasTxtBtn").onclick = async () => {
-  const v = getIdeas(); if(!v.trim()){ $("ideasMsg").textContent = "Die Liste ist leer."; return; }
-  const name = "arbeitszeit-ideen-" + todayISO() + ".txt";
+  const v = reqsText(); if(!v){ $("reqMsg").textContent = "Die Liste ist leer."; return; }
+  const name = "arbeitszeit-requests-" + todayISO() + ".txt";
   try {
     const file = new File([v], name, { type:"text/plain" });
-    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); $("ideasMsg").textContent = "Als .txt geteilt."; return; }
+    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); $("reqMsg").textContent = "Als .txt geteilt."; return; }
   } catch(e){ if(e && e.name === "AbortError") return; }
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([v], { type:"text/plain;charset=utf-8" })); a.download = name;
-  document.body.appendChild(a); a.click(); a.remove(); $("ideasMsg").textContent = "Als .txt gespeichert.";
-};
-$("ideasClear").onclick = () => {
-  if(!getIdeas().trim()) return;
-  if(!confirm("Ideen-Notiz wirklich leeren? Das lässt sich nicht rückgängig machen.")) return;
-  setIdeas(""); $("ideasTxt").value = ""; $("ideasMsg").textContent = "Liste geleert.";
+  document.body.appendChild(a); a.click(); a.remove(); $("reqMsg").textContent = "Als .txt gespeichert.";
 };
 
 /* ---------- v2.5: Zeitraum eintragen (Urlaub/TAZ von–bis) ---------- */
@@ -1021,12 +1197,53 @@ $("rOk").onclick = () => {
   toast(r.set.length + (r.set.length === 1 ? " Tag" : " Tage") + " als " + art + " eingetragen");
 };
 
+/* ---------- v2.7: Rückfrage bei unzulässiger Eingabe ----------
+   Fehler (Ende vor Start, Überschneidung) und Arbeitszeitverstöße (Block über 6 h, Pause, über 10 h, Rahmenzeit).
+   Gefragt wird nur, wenn eine Änderung einen Fall neu auslöst. Gespeichert wird nur nach Bestätigung. */
+const rahmenVon = () => Number.isFinite(S.cfg.rahmenVon) ? S.cfg.rahmenVon : 360;
+const rahmenBis = () => Number.isFinite(S.cfg.rahmenBis) ? S.cfg.rahmenBis : 1200;
+function dayIssues(ds, day){
+  const out = {}, b = (day.b || []).map(x => [toMin(x[0]), toMin(x[1])]), rv = rahmenVon(), rb = rahmenBis();
+  b.forEach(([s, e], i) => {
+    const n = "Block " + (i+1);
+    if(s != null && e != null && e <= s) out["end"+i] = n + ": Das Ende (" + clock(e) + ") liegt nicht nach dem Start (" + clock(s) + ").";
+    if(s != null && e != null && e - s > 360) out["long"+i] = n + " dauert " + dur(e-s) + " am Stück – erlaubt sind höchstens 6 Stunden.";
+    if(s != null && s < rv) out["rv"+i] = n + " beginnt um " + clock(s) + " – vor der Rahmenzeit ab " + clock(rv) + ".";
+    if(s != null && s > rb) out["rs"+i] = n + " beginnt um " + clock(s) + " – nach der Rahmenzeit bis " + clock(rb) + ".";
+    else if(e != null && e > rb) out["rb"+i] = n + " endet um " + clock(e) + " – nach der Rahmenzeit bis " + clock(rb) + ".";
+  });
+  for(let i = 0; i < b.length; i++) for(let j = 0; j < b.length; j++){
+    if(i === j) continue;
+    const [si, ei] = b[i], [sj, ej] = b[j];
+    if(si == null || sj == null || ej == null || ej <= sj) continue;
+    const hit = (ei != null && ei > si) ? (i < j && si < ej && sj < ei) : (si >= sj && si < ej);
+    if(hit){ const a = Math.min(i, j), z = Math.max(i, j); out["ov"+a+"-"+z] = "Block " + (z+1) + " überschneidet sich mit Block " + (a+1) + "."; }
+  }
+  const c = compute(ds, false, day);
+  if(c.ist > S.cfg.max) out.max = "Arbeitszeit " + dur(c.ist) + " – mehr als " + (S.cfg.max % 60 ? dur(S.cfg.max) : S.cfg.max / 60) + " Stunden am Tag.";
+  if(c.ist > 540 && c.pauses < 45) out.p45 = "Bei " + dur(c.ist) + " Arbeitszeit sind 45 min Pause nötig, eingetragen sind " + dur(c.pauses) + ". Pausen unter 15 min zählen nicht.";
+  else if(c.ist > 360 && c.pauses < 30) out.p30 = "Bei " + dur(c.ist) + " Arbeitszeit sind 30 min Pause nötig, eingetragen sind " + dur(c.pauses) + ". Pausen unter 15 min zählen nicht.";
+  return out;
+}
+let warnResolve = null;
+function askIssues(before, after, yesLabel, noLabel){
+  const fresh = Object.keys(after).filter(k => !(k in before));
+  if(!fresh.length) return Promise.resolve(true);
+  $("warnList").innerHTML = fresh.map(k => "<li>" + esc(after[k]) + "</li>").join("");
+  $("warnYes").textContent = yesLabel; $("warnNo").textContent = noLabel;
+  return new Promise(res => { warnResolve = res; $("warnDlg").showModal(); });
+}
+function warnDone(ok){ const r = warnResolve; warnResolve = null; if($("warnDlg").open) $("warnDlg").close(); if(r) r(ok); }
+$("warnYes").onclick = () => warnDone(true);
+$("warnNo").onclick = () => warnDone(false);
+$("warnDlg").addEventListener("cancel", e => { e.preventDefault(); warnDone(false); });
+
 /* ---------- Hinweis unten ---------- */
 let toastT = null;
 function toast(t){ const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 3200); }
 
 /* neueste Sicherheitskopie zuerst */
-const PRE_KEYS = ["azb.pre-v2.5", "azb.pre-v2.1", "azb.pre-v2"];
+const PRE_KEYS = ["azb.pre-v2.7", "azb.pre-v2.5", "azb.pre-v2.1", "azb.pre-v2"];
 $("preBtn").onclick = () => {
   const key = PRE_KEYS.find(k => ls.get(k)), pre = key && ls.get(key); if(!pre || !pre.data) return;
   if(!confirm("Stand vom " + String(pre.saved||"?").slice(0,10) + " (vor dem Update) wiederherstellen? Einträge, die du seitdem gemacht hast, gehen verloren.")) return;
@@ -1058,6 +1275,8 @@ render();
     if(raw && !localStorage.getItem("azb.pre-v2.1")) localStorage.setItem("azb.pre-v2.1", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
     /* v2.5: gleiche Sicherheitskopie für den Stand vor Version 2.5 */
     if(raw && !localStorage.getItem("azb.pre-v2.5")) localStorage.setItem("azb.pre-v2.5", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
+    /* v2.7: gleiche Sicherheitskopie für den Stand vor Version 2.7 */
+    if(raw && !localStorage.getItem("azb.pre-v2.7")) localStorage.setItem("azb.pre-v2.7", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
   } catch(e){}
   const loc = ls.get("azb.local") || FIRST_RUN;
   S.months = loc.months || {}; S.cfg = { ...DEF, ...(loc.cfg||{}) };
