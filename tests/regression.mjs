@@ -20,7 +20,7 @@ const arg = n => { const i = process.argv.indexOf(n); return i > 0 ? process.arg
 const HTML_PATH = arg("--html") || path.join(DIR, "..", "index.html");
 const UPDATE = arg("--update");
 const HTML = fs.readFileSync(HTML_PATH, "utf8");
-const REF = fs.readFileSync(path.join(DIR, "referenz.json"), "utf8");
+const REF = JSON.stringify(JSON.parse(fs.readFileSync(path.join(DIR, "referenz.json"), "utf8")));   // unabhängig vom Zeilenumbruch am Dateiende
 const EXP_PATH = path.join(DIR, "erwartet.json");
 const EXP = fs.existsSync(EXP_PATH) ? JSON.parse(fs.readFileSync(EXP_PATH, "utf8")) : {};
 
