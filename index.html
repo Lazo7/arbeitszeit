@@ -251,6 +251,37 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
 .threebtns{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}
 .threebtns .btn{padding:10px 6px}
 .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(84px + env(safe-area-inset-bottom,0px));z-index:9;background:var(--dark);color:var(--dark-ink);border-radius:12px;padding:10px 14px;font-size:14px;font-weight:600;max-width:calc(100vw - 32px);box-shadow:0 4px 16px rgba(0,0,0,.25)}
+/* v3.0: Jahr, Urlaub, Import */
+.tabbar .in{grid-template-columns:repeat(4,1fr)}
+.khint.neg{color:var(--neg);background:var(--neg-bg)}
+.khint{font-size:14px;font-weight:600;color:var(--info);background:var(--info-bg);border-radius:10px;padding:8px 10px;margin-top:10px;display:grid;gap:4px}
+#v-jahr .datenav h1{text-align:center}
+.ysaldo{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;align-items:end}
+.ysaldo .v{font-family:var(--font-num);font-size:24px;font-weight:600;font-variant-numeric:tabular-nums}
+.ysaldo .v.xl{font-size:34px}
+.ytxt{font-size:14px;color:var(--muted);display:grid;gap:4px;margin-top:10px}
+.ytxt b{color:var(--fg);font-family:var(--font-num);font-size:16px;font-variant-numeric:tabular-nums}
+.ynote{font-size:14px;font-weight:600;border-radius:10px;padding:8px 10px;margin-top:10px}
+.ynote.info{color:var(--info);background:var(--info-bg)} .ynote.ok{color:var(--pos);background:var(--pos-bg)} .ynote.neg{color:var(--neg);background:var(--neg-bg)}
+.ubar{display:flex;height:10px;border-radius:5px;overflow:hidden;background:var(--surface-2);border:1px solid var(--line);margin-top:4px}
+.ubar i{display:block;height:100%}
+.ubar i.used{background:var(--accent)} .ubar i.plan{background:var(--accent-soft);box-shadow:inset 0 0 0 1px var(--accent)} .ubar i.over{background:var(--neg)}
+.unums{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.unums.five{grid-template-columns:repeat(3,minmax(0,1fr));row-gap:10px}
+.unums .v{font-family:var(--font-num);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.qrow{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;padding:8px 0;border-top:1px solid var(--line)}
+.qrow:first-of-type{border-top:0}
+.qrow .q{font-weight:700}
+.qrow .qd{font-size:13px;color:var(--muted)}
+.qrow .qv{text-align:right;font-family:var(--font-num);font-size:18px;font-variant-numeric:tabular-nums}
+.qrow .qg{grid-column:2 / 4;font-size:13px;color:var(--muted)}
+.qrow .qg.neg{color:var(--neg);font-weight:600}
+.qin{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;grid-column:1 / -1}
+.qin.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.qin label{display:grid;gap:2px;font-size:12px;color:var(--muted);font-weight:600;text-align:center}
+.field .qin input[type=number]{width:100%;max-width:none;text-align:center;color:var(--fg);font-weight:400}
+.bakgo{width:100%;margin-top:6px}
+@media (max-width:380px){.unums .v{font-size:19px}.tabbar button{font-size:13px}}
 @media (max-width:380px){.hero .big{font-size:54px}.stat .v{font-size:21px}.seg button{font-size:13px}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -319,6 +350,7 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
         <div><div class="label">TAZ möglich</div><div class="v" id="kTaz">–</div></div>
         <div><div class="label">Gleitzeit</div><div class="v" id="kRest">–</div></div>
       </div>
+      <div class="khint" id="kontoHint" hidden></div>
       <div class="taz" id="tazBox">
         <div class="sechead" style="margin:0"><span class="label" id="tazHead">TAZ-Kontingent</span><span class="muted" style="font-size:13px" id="tazCount"></span></div>
         <div class="pips" id="tazPips" aria-hidden="true"></div>
@@ -342,6 +374,16 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
     <div id="months" class="view"></div>
   </section>
 
+  <!-- v3.0: JAHR -->
+  <section id="v-jahr" class="view" aria-label="Jahr" hidden>
+    <div class="datenav">
+      <button class="iconbtn" id="yPrev" aria-label="Vorheriges Jahr">‹</button>
+      <h1 id="yTitle">–</h1>
+      <button class="iconbtn" id="yNext" aria-label="Nächstes Jahr">›</button>
+    </div>
+    <div id="yBody" class="view"></div>
+  </section>
+
   <!-- EINSTELLUNGEN -->
   <section id="v-set" class="view" aria-label="Einstellungen" hidden>
     <div class="datenav"><h1>Einstellungen<small class="sync"><span class="dot"></span><span>Auf diesem Gerät gespeichert</span></small></h1></div>
@@ -353,9 +395,15 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
       <div class="field"><label for="cStich">Stichtag <small>Saldo gilt am Ende dieses Tages</small></label><input type="date" id="cStich"></div>
       <div class="field"><label for="cTazMax">TAZ-Tage pro Jahr <small>Höchstens so viele ganze Tage aus dem Gleitzeitkonto</small></label><input type="number" id="cTazMax" min="0" max="60" inputmode="numeric"></div>
       <div class="field"><label for="cTaz">TAZ im Startjahr schon genommen <small>vor dem Stichtag</small></label><input type="number" id="cTaz" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label for="cUrl">Urlaubstage pro Jahr <small>Grundanspruch bei 5-Tage-Woche. Resttage verfallen am 31.12.</small></label><input type="number" id="cUrl" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label for="cUrlV">Urlaub im Startjahr schon genommen <small>vor dem Stichtag</small></label><input type="number" id="cUrlV" min="0" max="60" inputmode="numeric"></div>
+      <div class="field"><label>Grenzen Gleitzeitkonto <small>Stunden. Keine Kappung – die App warnt ab der Vorwarnung und deutlich ab der Grenze.</small></label>
+        <div class="qin two"><label>Plus Vorwarnung<input type="number" id="cPW" min="0" max="999" inputmode="numeric" aria-label="Vorwarnung Plus in Stunden"></label><label>Plus Grenze<input type="number" id="cPG" min="0" max="999" inputmode="numeric" aria-label="Grenze Plus in Stunden"></label><label>Minus Vorwarnung<input type="number" id="cMW" min="0" max="999" inputmode="numeric" aria-label="Vorwarnung Minus in Stunden"></label><label>Minus Grenze<input type="number" id="cMG" min="0" max="999" inputmode="numeric" aria-label="Grenze Minus in Stunden"></label></div></div>
+      <div class="field"><label>Hinweisgrenzen je Quartal <small>Stunden Plus zum Quartalsende. Nur Hinweis, leer = keine.</small></label>
+        <div class="qin"><label>Q1<input type="number" id="cQ0" min="0" max="999" inputmode="numeric" aria-label="Hinweisgrenze Q1 in Stunden"></label><label>Q2<input type="number" id="cQ1" min="0" max="999" inputmode="numeric" aria-label="Hinweisgrenze Q2 in Stunden"></label><label>Q3<input type="number" id="cQ2" min="0" max="999" inputmode="numeric" aria-label="Hinweisgrenze Q3 in Stunden"></label><label>Q4<input type="number" id="cQ3" min="0" max="999" inputmode="numeric" aria-label="Hinweisgrenze Q4 in Stunden"></label></div></div>
       <div class="field"><label for="cRv">Rahmenzeit von <small>Arbeit vor dieser Uhrzeit löst eine Rückfrage aus</small></label><input type="time" id="cRv"></div>
       <div class="field"><label for="cRb">Rahmenzeit bis <small>Arbeit nach dieser Uhrzeit löst eine Rückfrage aus</small></label><input type="time" id="cRb"></div>
-      <div class="field"><label for="cFrei">Heiligabend &amp; Silvester frei</label><label class="switch"><input type="checkbox" id="cFrei"><span></span></label></div>
+      <div class="field"><label for="cFrei">Bankfeiertage frei <small>24.12. und 31.12. zählen wie Feiertage</small></label><label class="switch"><input type="checkbox" id="cFrei"><span></span></label></div>
     </div>
     <div class="card help">
       <p><b style="color:var(--fg)">So rechnet die App</b></p>
@@ -363,6 +411,8 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
       <p>TAZ zieht die Sollzeit vom Konto ab. Pro Jahr sind höchstens 6 TAZ-Tage möglich (einstellbar). „TAZ möglich“ zeigt deshalb das Minimum aus Saldo und restlichem Kontingent. Sind alle TAZ genutzt, bleibt das Plus nur noch Gleitzeit.</p>
       <p>„Im Büro“ schreibt dir die feste Wegezeit gut – für den Weg auf dem Gelände und im Gebäude sowie den Aufbau deines Laptops am Shared Desk. Die Minuten zählen zur Ist-Zeit.</p>
       <p>Urlaub, Krank, Frei und Feiertage (Hessen, automatisch) sind neutral.</p>
+      <p>Urlaub: Pro Kalenderjahr gilt der eingestellte Anspruch (Standard 30 Tage). Resttage verfallen am 31.12. Ein zusammenhängender Urlaub, der im alten Jahr beginnt, darf ins neue Jahr reichen: Seine Tage im neuen Jahr zählen dort als genommen, und ebenso viele Resttage werden übertragen (z. B. Anspruch 30 + 1). Ohne Rest gibt es keinen Übertrag. Zusammenhängend heißt: dazwischen liegen nur Wochenenden und Feiertage.</p>
+      <p>Grenzen: Es wird nichts gekappt. Ab +32 Stunden warnt die App vor, über +40 Stunden deutlich – dann solltest du Plus abbauen. Im Minus gilt das ab −12 bzw. unter −20 Stunden. Alle Werte sind einstellbar, ebenso Hinweisgrenzen je Quartal.</p>
       <p>„Gehen um“ erscheint, sobald ein Block gestartet, aber noch nicht beendet ist, und enthält fehlende Pflichtpausen.</p>
       <p>Mixed Mode: Das Symbol neben der Blocknummer zeigt, wo du gearbeitet hast – Haus = Homeoffice, Gebäude = Büro. Antippen wechselt. Sobald ein Block im Büro liegt, ist „Im Büro“ an und die Wegezeit wird einmal pro Tag gutgeschrieben.</p>
       <p>Rückfrage vor dem Speichern: Liegt ein Ende vor dem Start, überschneiden sich Blöcke, dauert ein Block über 6 h, fehlt Pflichtpause, sind es über 10 h oder liegt Arbeit außerhalb der Rahmenzeit, fragt die App nach – auch beim Stempeln. Bestätigte Fälle werden nicht noch einmal abgefragt.</p>
@@ -374,14 +424,16 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
       <button class="btn" id="csvBtn">Alle Tage als CSV kopieren</button>
       <span class="muted" style="font-size:14px" id="csvMsg">Zum Einfügen in Excel. Geplante Tage sind als „geplant“ gekennzeichnet und zählen nicht in den Saldo.</span>
       <textarea id="csvOut" hidden readonly style="width:100%;min-height:120px;font-size:12px;border:1px solid var(--line);background:var(--bg);border-radius:10px;padding:8px"></textarea>
-      <button class="btn" id="expBtn">Sicherung speichern (JSON)</button>
-      <label class="btn" for="impFile" style="text-align:center">Sicherung wiederherstellen …</label>
+      <button class="btn primary" id="expBtn">Sicherung teilen</button>
+      <span class="muted" style="font-size:14px">Ein Tipp öffnet das Teilen-Menü deines Handys – z. B. „In Dateien sichern“ für iCloud Drive oder „Drive“ für Google Drive.</span>
+      <label class="btn" for="impFile" style="text-align:center">Sicherung laden und prüfen …</label>
       <input type="file" id="impFile" accept=".json,application/json" hidden>
       <span class="muted" style="font-size:14px" id="bakLast" hidden></span>
       <span class="muted" style="font-size:14px" id="bakMsg">Deine Daten liegen nur auf diesem Gerät. Speichere ab und zu eine Sicherung, z. B. in iCloud Drive.</span>
       <button class="btn" id="preBtn" hidden>Stand vor dem Update wiederherstellen</button>
+      <button class="btn" id="impUndo" hidden>Stand vor dem letzten Laden wiederherstellen</button>
     </div>
-    <div class="verrow"><span class="ver">Version 2.7 · Oktober 2026</span><button class="verlink" id="ideasBtn">Ideen-Notiz</button></div>
+    <div class="verrow"><span class="ver">Version 3.0 · November 2026</span><button class="verlink" id="ideasBtn">Ideen-Notiz</button></div>
   </section>
 </div>
 
@@ -416,6 +468,13 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
   </div>
 </dialog>
 
+<!-- v3.0: Sicherung prüfen, bevor sie übernommen wird -->
+<dialog class="sheet" id="impDlg" aria-labelledby="impTitle">
+  <h2 id="impTitle">Sicherung prüfen</h2>
+  <div class="preview" id="impPrev"></div>
+  <div class="stackbtns"><button class="btn primary" id="impReplace">Übernehmen</button><button class="btn" id="impMerge" hidden>Zusammenführen</button><button class="btn" id="impCancel">Abbrechen</button></div>
+</dialog>
+
 <!-- v2.7: Rückfrage bei unzulässiger Eingabe -->
 <dialog class="sheet" id="warnDlg" aria-labelledby="warnTitle">
   <h2 id="warnTitle">Bitte prüfen</h2>
@@ -428,6 +487,7 @@ dialog.sheet h2{margin:0 0 12px;font-family:var(--font-num);font-size:22px;font-
 <nav class="tabbar" aria-label="Bereiche"><div class="in">
   <button data-tab="heute" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Tag</button>
   <button data-tab="verlauf"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h10"/></svg>Verlauf</button>
+  <button data-tab="jahr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 10h17M8 3v4M16 3v4M8 14.5h3M8 17h6"/></svg>Jahr</button>
   <button data-tab="set"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>Einstellungen<i class="bdot" id="setDot" hidden></i></button>
 </div></nav>
 
@@ -469,13 +529,26 @@ function holidays(y){
 }
 function holidayName(ds){
   const h = holidays(+ds.slice(0,4))[ds]; if(h) return h;
-  if(S.cfg.frei2412){ if(ds.endsWith("-12-24")) return "Heiligabend"; if(ds.endsWith("-12-31")) return "Silvester"; }
+  if(S.cfg.frei2412){ if(ds.endsWith("-12-24")) return "Heiligabend (Bankfeiertag)"; if(ds.endsWith("-12-31")) return "Silvester (Bankfeiertag)"; }
   return null;
 }
 
 /* ---------- state ---------- */
 const DEF = { soll:456, wege:10, startSaldo:0, stichtag:"", tazVorher:0, tazMax:6, frei2412:false, max:600 };
 const S = { cfg:{...DEF}, months:{}, date:todayISO(), wish:(ls.get("azb.wish")||0), showPlan:(ls.get("azb.showPlan")===true), showWeek:(ls.get("azb.showWeek")!==false), tab:"heute", mode:"loading" };
+
+/* v3.0: App- und Schema-Version. Das Schema steht in azb.schema und in der JSON-Sicherung (Feld schema),
+   nicht in azb.local – damit bleiben die gespeicherten Tagesdaten byte-identisch. */
+const APP_VERSION = "3.0", SCHEMA = 3;
+/* v3.0: neue Einstellungen – stehen bewusst nicht in DEF, damit azb.local beim Start unverändert bleibt.
+   Gespeichert werden sie erst, wenn sie in den Einstellungen geändert werden. */
+const urlAnspruch = () => { const n = parseInt(S.cfg.urlAnspruch, 10); return Number.isFinite(n) && n >= 0 ? n : 30; };
+/* Grenzen des Gleitzeitkontos (keine Kappung – nur Hinweise): Plus-Grenze 40 h, Vorwarnung ab 32 h,
+   Minus-Grenze 20 h, Vorwarnung ab 12 h. Gespeichert als positive Minuten. */
+const mins = (k, d) => Number.isFinite(S.cfg[k]) && S.cfg[k] >= 0 ? S.cfg[k] : d;
+const plusGrenze = () => mins("plusGrenze", 2400), plusWarn = () => mins("plusWarn", 1920);
+const minusGrenze = () => mins("minusGrenze", 1200), minusWarn = () => mins("minusWarn", 720);
+const qGrenze = q => { const a = S.cfg.qGrenzen; return Array.isArray(a) && Number.isFinite(a[q]) ? a[q] : null; };
 
 const getDay = ds => (S.months[ds.slice(0,7)]||{})[ds] || null;
 function allDates(){ const out=[]; for(const k in S.months) for(const ds in S.months[k]) out.push(ds); return out.sort(); }
@@ -536,6 +609,54 @@ function tazStatus(ds){
   const taken = tazVorherIn(y) + list.filter(x => x <= ds).length;
   const planned = list.filter(x => x > ds).length;
   return { y, max, taken, planned, rest: Math.max(0, max - taken - planned), over: Math.max(0, taken + planned - max) };
+}
+
+/* ---------- v3.0: Urlaubskontingent (Anspruch pro Kalenderjahr, Resttage verfallen am 31.12.) ----------
+   Ausnahme (Naspa-Praxis, TVöD-S): Ein zusammenhängender Urlaub, der im alten Jahr beginnt, darf ins neue Jahr reichen.
+   Seine Tage im neuen Jahr zählen dort als genommen; ebenso viele Resttage des alten Jahres werden übertragen
+   (Anspruch neues Jahr = Grundanspruch + Übertrag). Ohne Rest gibt es keinen Übertrag.
+   Beispiel: Urlaub bis 02.01.2026 → 2025: 29 genommen, 1 übertragen · 2026: Anspruch 30 + 1, der 02.01. zählt als genommen.
+   Zusammenhängend = zwischen zwei Urlaubstagen liegen nur Wochenenden und Feiertage (inkl. Bankfeiertage, wenn eingeschaltet). */
+function isUrlDay(x){ if(!inRange(x)) return false; const c = compute(x); return c.typ === "Urlaub" && !c.weekend; }
+function urlVorherIn(y){ return (S.cfg.stichtag && S.cfg.stichtag.startsWith(y)) ? (parseInt(S.cfg.urlVorher, 10) || 0) : 0; }
+function connected(a, b){ for(let d = addDays(a, 1); d < b; d = addDays(d, 1)) if(isWorkday(d)) return false; return true; }
+/* Ordnet jeden Urlaubstag einem Kontingentjahr zu. extra = zusätzliche (geplante) Tage für die Vorschau. */
+function urlCalc(extra){
+  const set = new Set(allDates().filter(isUrlDay)); (extra || []).forEach(d => set.add(d));
+  const list = [...set].sort(), runs = [];
+  list.forEach(d => { const r = runs[runs.length-1]; if(r && connected(r[r.length-1], d)) r.push(d); else runs.push([d]); });
+  const res = {}, of = {}, max = urlAnspruch();
+  if(!list.length) return { res, of };
+  let y = +list[0].slice(0,4); const yEnd = +list[list.length-1].slice(0,4);
+  if(S.cfg.stichtag) y = Math.min(y, +S.cfg.stichtag.slice(0,4));
+  for(; y <= yEnd; y++){
+    const Y = String(y), vorher = urlVorherIn(Y);
+    const fromPrev = list.filter(d => d.startsWith(Y) && of[d] && of[d] !== Y);
+    const own = list.filter(d => d.startsWith(Y) && !of[d]);
+    own.forEach(d => { of[d] = Y; });
+    let rest = Math.max(0, max - vorher - own.length);
+    const toNext = [];
+    runs.filter(r => r[0].startsWith(Y)).forEach(r => r.filter(d => d.slice(0,4) > Y).forEach(d => { if(rest > 0){ of[d] = Y; toNext.push(d); rest--; } }));
+    res[Y] = { max, vorher, own, toNext, fromPrev, days: own.concat(toNext) };
+  }
+  return { res, of };
+}
+/* Stand des Urlaubskontingents eines Kalenderjahres aus Sicht von heute.
+   Genommen/geplant = alle Urlaubstage, die in diesem Jahr liegen (auch die aus dem Vorjahr übertragenen). */
+function urlaubJahr(y, extra){
+  const today = todayISO(), r = urlCalc(extra).res[y] || { max:urlAnspruch(), vorher:urlVorherIn(y), own:[], toNext:[], fromPrev:[], days:[] };
+  const inYear = r.fromPrev.concat(r.own).sort(), uebIn = r.fromPrev.length, uebOut = r.toNext.length, anspruch = r.max + uebIn;
+  const genommen = r.vorher + inYear.filter(d => d <= today).length, geplant = inYear.filter(d => d > today).length;
+  const offen = inYear.filter(d => d > today && !(getDay(d) || {}).g).length;
+  return { jahr:y, grundanspruch:r.max, uebertragIn:uebIn, anspruch, vorher:r.vorher, genommen, geplant, offen, uebertragOut:uebOut,
+           rest:Math.max(0, anspruch - genommen - geplant - uebOut), ueber:Math.max(0, genommen + geplant + uebOut - anspruch),
+           ersterFolgetag:r.toNext[0] || "", letzterFolgetag:r.toNext[uebOut-1] || "" };
+}
+/* Der wievielte Urlaubstag des Kalenderjahres ist dieser Tag? */
+function urlNr(ds){
+  const { res } = urlCalc(), y = ds.slice(0,4), r = res[y]; if(!r) return null;
+  const inYear = r.fromPrev.concat(r.own).sort(), i = inYear.indexOf(ds); if(i < 0) return null;
+  return { y, nr: r.vorher + i + 1, max: r.max + r.fromPrev.length, uebIn: r.fromPrev.length, ausVorjahr: r.fromPrev.includes(ds) };
 }
 
 /* ---------- v2.5: Mixed Mode Büro/Homeoffice ----------
@@ -626,6 +747,11 @@ function renderHeute(full){
     label = c.hol ? "Feiertag" : c.weekend ? "Wochenende" : c.typ;
     big = c.typ === "Arbeit" || c.typ === "Feiertag" ? "Frei" : c.typ;
     sub = c.hol || "Kein Soll an diesem Tag";
+    if(c.typ === "Urlaub" && !c.weekend){
+      const u = urlNr(ds);
+      if(u) sub = (u.nr > u.max ? "Achtung: " + u.nr + ". Urlaubstag – Anspruch " + u.y + " sind " + u.max + " Tage" : "Urlaubstag " + u.nr + " von " + u.max + " in " + u.y) +
+                  (u.ausVorjahr ? " – Resttag aus " + (+u.y - 1) + " übertragen" : "");
+    }
   } else if(!c.any && c.typ === "TAZ"){
     label = "Gleittag (TAZ)"; big = signed(c.diff);
     const nr = tazNr(ds), y0 = ds.slice(0,4);
@@ -728,6 +854,26 @@ function renderHeute(full){
   else if(ts.rest === 0) tazMsg = "Alle " + ts.max + " TAZ für " + ts.y + " sind genutzt – weiteres Plus bleibt Gleitzeit.";
   else if(bySaldo > ts.rest) tazMsg = "Dein Saldo reicht für " + bySaldo + " TAZ, das Kontingent nur noch für " + ts.rest + ".";
   $("tazFull").textContent = tazMsg; $("tazFull").hidden = !tazMsg;
+  renderKontoHint(ds, saldo);
+}
+/* v3.0: Hinweise zum Gleitzeitkonto (ändern den Saldo nicht). Keine Kappung – über +40 h bzw. unter −20 h
+   gibt es bei der Naspa eine Ermahnung, deshalb warnt die App schon ab +32 h bzw. −12 h (alles einstellbar). */
+const Q_END = ["03-31","06-30","09-30","12-31"];
+function grenzStatus(s){
+  const pg = plusGrenze(), pw = plusWarn(), mg = minusGrenze(), mw = minusWarn();
+  if(s > pg) return { level:"neg", text:dur(s - pg) + " über der Grenze von " + signed(pg) + " – Plus jetzt abbauen, z. B. mit TAZ." };
+  if(s >= pw) return { level:"info", text:"Noch " + dur(pg - s) + " bis zur Grenze von " + signed(pg) + " – rechtzeitig abbauen." };
+  if(s < -mg) return { level:"neg", text:dur(-s - mg) + " unter der Grenze von " + signed(-mg) + " – Minus jetzt ausgleichen." };
+  if(s <= -mw) return { level:"info", text:"Noch " + dur(mg + s) + " bis zur Grenze von " + signed(-mg) + " – rechtzeitig ausgleichen." };
+  return { level:"ok", text:"Innerhalb der Grenzen (" + signed(-mg) + " bis " + signed(pg) + ")." };
+}
+function renderKontoHint(ds, saldo){
+  const q = Math.floor((+ds.slice(5,7) - 1) / 3), g = qGrenze(q), y = ds.slice(0,4), out = [], st = grenzStatus(saldo);
+  if(st.level !== "ok") out.push(st.text);
+  if(g != null && saldo > g) out.push("Hinweisgrenze Q" + (q+1) + ": " + signed(g) + " zum " + dmy(y + "-" + Q_END[q]) + " – aktuell " + dur(saldo - g) + " darüber.");
+  $("kontoHint").innerHTML = out.map(t => "<span>" + esc(t) + "</span>").join("");
+  $("kontoHint").className = "khint" + (st.level === "neg" ? " neg" : "");
+  $("kontoHint").hidden = !out.length;
 }
 
 /* v2.7: Dauer unter jedem Block; der laufende Block zählt live mit, über 6 h am Stück rot */
@@ -856,6 +1002,112 @@ function renderVerlauf(){
   }).join("");
 }
 
+/* ---------- v3.0: Jahr – Jahresabschluss ---------- */
+const Y = { year:null };
+function jahrSpanne(){
+  const ds = allDates(), ty = +todayISO().slice(0,4);
+  const a = S.cfg.stichtag ? +S.cfg.stichtag.slice(0,4) : (ds.length ? +ds[0].slice(0,4) : ty);
+  return [Math.min(a, ty), Math.max(ty, ds.length ? +ds[ds.length-1].slice(0,4) : ty)];
+}
+function jahrDaten(y){
+  const today = todayISO(), start = y + "-01-01", end = y + "-12-31", st = S.cfg.stichtag || "";
+  if(st && end <= st) return { y, leer:true, stichtag:st };
+  const abStichtag = !!st && st >= start, ab = abStichtag ? addDays(st, 1) : start;
+  const startSaldo = abStichtag ? S.cfg.startSaldo : saldoBis(addDays(start, -1));
+  const phase = end < today ? "vorbei" : start > today ? "zukunft" : "laufend";
+  const sEnd = saldoBis(end), sHeute = phase === "laufend" ? saldoBis(today) : null;
+  let ist = 0, soll = 0, diff = 0, krank = 0, nPlan = 0;
+  allDates().forEach(d => {
+    if(d < ab || d > end || !inRange(d)) return;
+    const c = compute(d);
+    if(d > today){ if(c.diff != null || c.typ !== "Arbeit") nPlan++; return; }
+    if(c.diff != null){ ist += c.ist; soll += c.soll; diff += c.diff; }
+    if(c.typ === "Krank" && !c.weekend) krank++;
+  });
+  const tl = tazDates(y), tv = tazVorherIn(y);
+  const taz = { max:tazMax(), genommen: tv + tl.filter(d => d <= today).length, geplant: tl.filter(d => d > today).length };
+  taz.rest = Math.max(0, taz.max - taz.genommen - taz.geplant); taz.ueber = Math.max(0, taz.genommen + taz.geplant - taz.max);
+  const quartale = Q_END.map((qe, q) => {
+    const qEnd = y + "-" + qe, qStart = y + "-" + pad(q*3+1) + "-01", g = qGrenze(q);
+    if(qEnd < ab) return { q, ende:qEnd, art:"leer", grenze:g };
+    const art = qEnd <= today ? "stand" : qStart <= today ? "heute" : "voraussichtlich";
+    const saldo = saldoBis(art === "heute" ? today : qEnd);
+    return { q, ende:qEnd, art, saldo, grenze:g, ueber: g == null ? null : saldo - g };
+  });
+  return { y, phase, ab, abStichtag, startSaldo, saldoEnde:sEnd, saldoHeute:sHeute,
+           grenze:grenzStatus(phase === "laufend" ? sHeute : sEnd), grenzeEnde:grenzStatus(sEnd),
+           ist, soll, diff, krank, nPlan, taz, urlaub:urlaubJahr(y), quartale };
+}
+function renderJahr(){
+  const [a, b] = jahrSpanne();
+  let y = Y.year == null ? +todayISO().slice(0,4) : +Y.year; y = Math.max(a, Math.min(b, y)); Y.year = String(y);
+  $("yPrev").disabled = y <= a; $("yNext").disabled = y >= b;
+  $("yTitle").innerHTML = esc(Y.year) + "<small>Jahresabschluss</small>";
+  const J = jahrDaten(Y.year);
+  if(J.leer){ $("yBody").innerHTML = '<div class="card muted">Für ' + y + ' gibt es keine Daten. Die App rechnet ab dem Tag nach dem Stichtag (' + esc(dmy(J.stichtag) + J.stichtag.slice(0,4)) + ').</div>'; return; }
+  const v = (lab, val, xl) => '<div><div class="label">' + lab + '</div><div class="v' + (xl ? " xl" : "") + (val < 0 ? " neg" : "") + '">' + signed(val) + '</div></div>';
+  const nY = String(y + 1);
+  /* Gleitzeitkonto */
+  let k = '<div class="card"><div class="sechead"><span class="label">Gleitzeitkonto zum 31.12.</span><span class="muted" style="font-size:13px">' +
+    (J.phase === "vorbei" ? "abgeschlossen" : J.phase === "laufend" ? "läuft noch" : "Vorschau") + '</span></div><div class="ysaldo">';
+  if(J.phase === "vorbei") k += v("Saldo 31.12.", J.saldoEnde, true) + v(J.abStichtag ? "Start " + dmy(S.cfg.stichtag) : "Start 01.01.", J.startSaldo);
+  else if(J.phase === "laufend") k += v("Stand heute", J.saldoHeute, true) + v("Voraussichtlich 31.12.", J.saldoEnde);
+  else k += v("Start 01.01.", J.startSaldo, true) + v("Voraussichtlich 31.12.", J.saldoEnde);
+  k += '</div><div class="ytxt">';
+  if(J.phase === "laufend") k += '<span>' + (J.abStichtag ? "Startsaldo am Stichtag " + dmy(S.cfg.stichtag) : "Start 01.01.") + ': <b>' + signed(J.startSaldo) + '</b></span>';
+  if(J.phase !== "zukunft") k += '<span>Gebucht: Ist <b>' + dur(J.ist) + '</b> · Soll <b>' + dur(J.soll) + '</b> · Diff <b class="' + (J.diff < 0 ? "neg" : "pos") + '">' + signed(J.diff) + '</b></span>';
+  if(J.krank) k += '<span>Krank: <b>' + J.krank + '</b> ' + (J.krank === 1 ? "Tag" : "Tage") + '</span>';
+  if(J.phase !== "vorbei") k += '<span>„Voraussichtlich“ rechnet mit ' + (J.nPlan ? "den " + J.nPlan + " eingetragenen geplanten Tagen" : "dem heutigen Stand") + ' – Tage ohne Eintrag zählen nicht.</span>';
+  k += '</div>';
+  const lv = { neg:"neg", info:"info", ok:"ok" }, rank = { ok:0, info:1, neg:2 };
+  k += '<div class="ynote ' + lv[J.grenze.level] + '">' + (J.phase === "laufend" ? "Heute: " : J.phase === "zukunft" ? "Voraussichtlich: " : "") + esc(J.grenze.text) + '</div>';
+  if(J.phase === "laufend" && rank[J.grenzeEnde.level] > rank[J.grenze.level])
+    k += '<div class="ynote ' + lv[J.grenzeEnde.level] + '">Zum 31.12. voraussichtlich: ' + esc(J.grenzeEnde.text) + '</div>';
+  k += '<div class="ytxt"><span>Keine Kappung – der Saldo geht voll ins Jahr ' + nY + '.</span></div>';
+  k += '</div>';
+  /* Urlaub */
+  const U = J.urlaub, tot = U.genommen + U.geplant + U.uebertragOut, base = Math.max(U.anspruch, tot) || 1;
+  const pct = n => (100 * n / base).toFixed(2) + "%";
+  const usedOk = Math.min(U.genommen, U.anspruch), planOk = Math.max(0, Math.min(U.geplant + U.uebertragOut, U.anspruch - usedOk));
+  let u = '<div class="card"><div class="sechead"><span class="label">Urlaub ' + y + '</span><span class="muted" style="font-size:13px">' + tot + ' von ' + U.anspruch + '</span></div>' +
+    '<div class="ubar" aria-hidden="true"><i class="used" style="width:' + pct(usedOk) + '"></i><i class="plan" style="width:' + pct(planOk) + '"></i><i class="over" style="width:' + pct(U.ueber) + '"></i></div>' +
+    '<div class="unums' + (U.uebertragOut ? ' five' : '') + '"><div><div class="label">Anspruch</div><div class="v">' + U.anspruch + '</div></div><div><div class="label">Genommen</div><div class="v">' + U.genommen + '</div></div>' +
+    '<div><div class="label">Geplant</div><div class="v">' + U.geplant + '</div></div>' +
+    (U.uebertragOut ? '<div><div class="label">Nach ' + nY + '</div><div class="v">' + U.uebertragOut + '</div></div>' : '') +
+    '<div><div class="label">Rest</div><div class="v">' + U.rest + '</div></div></div><div class="ytxt">';
+  if(U.uebertragIn) u += '<span>Anspruch <b>' + U.anspruch + '</b> = ' + U.grundanspruch + ' + ' + U.uebertragIn + ' übertragen aus ' + (y - 1) + ' (Urlaub über den Jahreswechsel).</span>';
+  if(U.vorher) u += '<span>Davon <b>' + U.vorher + '</b> vor dem Stichtag genommen (Einstellungen).</span>';
+  if(U.uebertragOut) u += '<span><b>' + U.uebertragOut + '</b> ' + (U.uebertragOut === 1 ? "Resttag wird" : "Resttage werden") + ' nach ' + nY + ' übertragen – für den Urlaub ' + (U.uebertragOut === 1 ? "am " + dmy(U.ersterFolgetag) : dmy(U.ersterFolgetag) + "–" + dmy(U.letzterFolgetag)) + nY + '.</span>';
+  if(U.offen) u += '<span><b>' + U.offen + '</b> geplante' + (U.offen === 1 ? "r Tag" : " Tage") + ' noch nicht genehmigt.</span>';
+  u += '</div>';
+  if(U.ueber) u += '<div class="ynote neg">' + U.ueber + (U.ueber === 1 ? " Tag" : " Tage") + ' mehr als der Anspruch eingetragen.</div>';
+  else if(U.rest && J.phase === "vorbei") u += '<div class="ynote info">' + U.rest + (U.rest === 1 ? " Tag ist" : " Tage sind") + ' am 31.12. verfallen.</div>';
+  else if(U.rest) u += '<div class="ynote info">Noch ' + U.rest + (U.rest === 1 ? " Tag" : " Tage") + ' offen. Resttage verfallen am 31.12. – übertragen wird nur, was ein zusammenhängender Urlaub über den Jahreswechsel ins neue Jahr trägt.</div>';
+  else u += '<div class="ynote ok">Anspruch ' + y + ' ist vollständig ' + (U.geplant ? "verplant" : "genommen") + '.</div>';
+  u += '</div>';
+  /* TAZ */
+  const T = J.taz; let pips = "";
+  for(let i = 0; i < Math.max(T.max, T.genommen + T.geplant); i++) pips += '<i class="' + (i >= T.max ? "over" : i < T.genommen ? "used" : i < T.genommen + T.geplant ? "plan" : "") + '"></i>';
+  let t = '<div class="card"><div class="sechead" style="margin:0"><span class="label">TAZ ' + y + '</span><span class="muted" style="font-size:13px">' + (T.genommen + T.geplant) + ' von ' + T.max + '</span></div>' +
+    '<div class="taz" style="border:0;padding-top:0;margin-top:8px"><div class="pips" aria-hidden="true">' + pips + '</div>' +
+    '<div class="txt"><b>' + T.genommen + '</b> genommen' + (T.geplant ? ' · <b>' + T.geplant + '</b> geplant' : "") + ' · noch <b>' + T.rest + '</b> möglich</div></div>';
+  if(T.ueber) t += '<div class="ynote neg">' + T.ueber + ' TAZ mehr als erlaubt – was darüber liegt, zählt nur als Gleitzeit.</div>';
+  t += '</div>';
+  /* Quartale */
+  let q = '<div class="card"><div class="sechead"><span class="label">Quartale</span></div>';
+  J.quartale.forEach(x => {
+    const lab = { leer:"keine Daten", stand:"Stand " + dmy(x.ende), heute:"heute", voraussichtlich:"voraussichtlich " + dmy(x.ende) }[x.art];
+    q += '<div class="qrow"><span class="q">Q' + (x.q+1) + '</span><span class="qd">' + lab + '</span><span class="qv' + (x.saldo < 0 ? " neg" : "") + '">' + (x.art === "leer" ? "–" : signed(x.saldo)) + '</span>';
+    if(x.grenze != null && x.art !== "leer") q += '<span class="qg' + (x.ueber > 0 ? " neg" : "") + '">Hinweisgrenze ' + signed(x.grenze) + ' · ' + (x.ueber > 0 ? dur(x.ueber) + " darüber" : "eingehalten") + '</span>';
+    q += '</div>';
+  });
+  if(J.quartale.every(x => x.grenze == null)) q += '<div class="ytxt"><span>Hinweisgrenzen je Quartal stellst du in den Einstellungen ein.</span></div>';
+  q += '</div>';
+  $("yBody").innerHTML = k + u + t + q;
+}
+$("yPrev").onclick = () => { Y.year = String(+Y.year - 1); renderJahr(); };
+$("yNext").onclick = () => { Y.year = String(+Y.year + 1); renderJahr(); };
+
 /* ---------- render: Einstellungen ---------- */
 function renderSet(){
   const c = S.cfg, act = document.activeElement;
@@ -865,6 +1117,9 @@ function renderSet(){
   put("cSH", Math.floor(Math.abs(c.startSaldo)/60)); put("cSM", pad(Math.abs(c.startSaldo)%60));
   put("cStich", c.stichtag || ""); put("cTaz", c.tazVorher || 0); put("cTazMax", tazMax());
   put("cRv", clock(rahmenVon())); put("cRb", clock(rahmenBis()));
+  put("cUrl", urlAnspruch()); put("cUrlV", parseInt(c.urlVorher, 10) || 0);
+  put("cPW", Math.round(plusWarn() / 60)); put("cPG", Math.round(plusGrenze() / 60)); put("cMW", Math.round(minusWarn() / 60)); put("cMG", Math.round(minusGrenze() / 60));
+  for(let q = 0; q < 4; q++){ const g = qGrenze(q); put("cQ" + q, g == null ? "" : Math.round(g / 60)); }
   renderIdeasBtn();
   $("cFrei").checked = !!c.frei2412;
 }
@@ -873,13 +1128,14 @@ function render(full){
   if(S.tab === "heute") renderHeute(full);
   if(S.tab === "verlauf" && full !== false) renderVerlauf();
   if(S.tab === "set") renderSet();
+  if(S.tab === "jahr") renderJahr();
   renderBackup();
 }
 
 /* ---------- events ---------- */
 function go(tab){
   S.tab = tab;
-  ["heute","verlauf","set"].forEach(t => { $("v-"+t).hidden = t !== tab; });
+  ["heute","verlauf","jahr","set"].forEach(t => { $("v-"+t).hidden = t !== tab; });
   document.querySelectorAll(".tabbar button").forEach(b => { if(b.dataset.tab === tab) b.setAttribute("aria-current","page"); else b.removeAttribute("aria-current"); });
   render(); window.scrollTo(0,0);
 }
@@ -973,6 +1229,21 @@ $("cStich").onchange = e => mutateCfg({ stichtag: e.target.value || "" });
 $("cTaz").onchange = e => mutateCfg({ tazVorher: Math.max(0, parseInt(e.target.value,10) || 0) });
 $("cTazMax").onchange = e => { const v = parseInt(e.target.value,10); mutateCfg({ tazMax: Number.isFinite(v) && v >= 0 ? v : 6 }); };
 $("cFrei").onchange = e => mutateCfg({ frei2412: e.target.checked });
+/* v3.0: Urlaub, Grenzen, Quartalsgrenzen */
+$("cUrl").onchange = e => { const v = parseInt(e.target.value,10); mutateCfg({ urlAnspruch: Number.isFinite(v) && v >= 0 ? v : 30 }); };
+$("cUrlV").onchange = e => mutateCfg({ urlVorher: Math.max(0, parseInt(e.target.value,10) || 0) });
+/* Grenzen: Vorwarnung muss unter der Grenze liegen */
+[["cPW","plusWarn"],["cPG","plusGrenze"],["cMW","minusWarn"],["cMG","minusGrenze"]].forEach(([id, key]) => { $(id).onchange = e => {
+  const v = parseInt(e.target.value,10); if(!Number.isFinite(v) || v < 0) return renderSet();
+  const next = { plusWarn:plusWarn(), plusGrenze:plusGrenze(), minusWarn:minusWarn(), minusGrenze:minusGrenze(), [key]: v * 60 };
+  if(next.plusWarn > next.plusGrenze || next.minusWarn > next.minusGrenze){ toast("Die Vorwarnung muss unter der Grenze liegen."); return renderSet(); }
+  mutateCfg({ [key]: v * 60 });
+}; });
+[0,1,2,3].forEach(q => { $("cQ" + q).onchange = e => {
+  const v = parseInt(e.target.value,10), a = [0,1,2,3].map(i => qGrenze(i));
+  a[q] = Number.isFinite(v) && v >= 0 ? v * 60 : null;
+  mutateCfg({ qGrenzen: a });
+}; });
 /* v2.7: Rahmenzeit – wird erst gespeichert, wenn sie geändert wird (sonst gilt 6:00–20:00) */
 $("cRv").onchange = e => { const m = toMin(e.target.value); if(m == null) return renderSet(); if(m >= rahmenBis()){ toast("„Von“ muss vor „Bis“ liegen."); return renderSet(); } mutateCfg({ rahmenVon:m }); };
 $("cRb").onchange = e => { const m = toMin(e.target.value); if(m == null) return renderSet(); if(m <= rahmenVon()){ toast("„Bis“ muss nach „Von“ liegen."); return renderSet(); } mutateCfg({ rahmenBis:m }); };
@@ -997,34 +1268,110 @@ $("csvBtn").onclick = () => {
   } catch(e){ out.select(); $("csvMsg").textContent = "Text unten markiert – kopiere ihn manuell."; }
 };
 
-/* Sicherung */
-$("expBtn").onclick = async () => {
-  const txt = JSON.stringify({ app:"arbeitszeitbloecke", v:2, exported:new Date().toISOString(), cfg:S.cfg, months:S.months, ideas:getIdeas(), requests:getReqs() }, null, 1);
-  const name = "arbeitszeit-sicherung-" + todayISO() + ".json";
+/* ---------- Sicherung ----------
+   v3.0: Ein Tipp öffnet das Teilen-Menü des Handys (iPhone und Android gleich, Web Share API).
+   Ohne Teilen-Menü (z. B. am PC) wird die Datei heruntergeladen. Die Sicherung enthält Schema und App-Version. */
+function backupText(){
+  return JSON.stringify({ app:"arbeitszeitbloecke", v:3, schema:SCHEMA, appVersion:APP_VERSION, exported:new Date().toISOString(), cfg:S.cfg, months:S.months, ideas:getIdeas(), requests:getReqs() }, null, 1);
+}
+async function shareBackup(){
+  const txt = backupText(), n = new Date();
+  const name = "arbeitszeit-sicherung-" + todayISO() + "-" + pad(n.getHours()) + pad(n.getMinutes()) + ".json";
   try {
     const file = new File([txt], name, { type:"application/json" });
-    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); markBackup(); $("bakMsg").textContent = "Sicherung erstellt."; return; }
-  } catch(e){ if(e && e.name === "AbortError") return; }
+    if(navigator.canShare && navigator.canShare({ files:[file] })){ await navigator.share({ files:[file], title:name }); markBackup(); $("bakMsg").textContent = "Sicherung geteilt: " + name; toast("Sicherung geteilt"); return; }
+  } catch(e){ if(e && e.name === "AbortError"){ $("bakMsg").textContent = "Teilen abgebrochen – keine Sicherung gespeichert."; return; } }
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([txt], { type:"application/json" })); a.download = name;
-  document.body.appendChild(a); a.click(); a.remove(); markBackup(); $("bakMsg").textContent = "Sicherung heruntergeladen.";
-};
+  document.body.appendChild(a); a.click(); a.remove(); markBackup(); $("bakMsg").textContent = "Sicherung heruntergeladen: " + name;
+}
+$("expBtn").onclick = shareBackup;
+$("bakRemind").addEventListener("click", e => { if(e.target.id === "bakGo") shareBackup(); });
+
+/* v3.0: Sicherung laden – erst prüfen und vergleichen, dann übernehmen */
+const canon = v => Array.isArray(v) ? "[" + v.map(canon).join(",") + "]"
+  : (v && typeof v === "object") ? "{" + Object.keys(v).sort().map(k => JSON.stringify(k) + ":" + canon(v[k])).join(",") + "}" : JSON.stringify(v);
+const flatDays = months => { const o = {}; for(const k in (months || {})) for(const ds in (months[k] || {})) o[ds] = months[k][ds]; return o; };
+const CFG_NAME = { soll:"Sollzeit", wege:"Wegezeit", startSaldo:"Startsaldo", stichtag:"Stichtag", tazVorher:"TAZ vor Stichtag", tazMax:"TAZ pro Jahr", frei2412:"Bankfeiertage",
+  max:"Höchstarbeitszeit", rahmenVon:"Rahmenzeit von", rahmenBis:"Rahmenzeit bis", urlAnspruch:"Urlaubstage", urlVorher:"Urlaub vor Stichtag", plusWarn:"Vorwarnung Plus", plusGrenze:"Grenze Plus", minusWarn:"Vorwarnung Minus", minusGrenze:"Grenze Minus", qGrenzen:"Quartalsgrenzen" };
+function importAnalyse(text){
+  let d; try { d = JSON.parse(text); } catch(e){ return { ok:false, err:"Die Datei ist kein gültiges JSON." }; }
+  if(!d || typeof d.months !== "object" || !d.months || typeof d.cfg !== "object" || !d.cfg) return { ok:false, err:"Die Datei ist keine Sicherung dieser App." };
+  const schema = Number.isFinite(d.schema) ? d.schema : 2;
+  if(schema > SCHEMA) return { ok:false, err:"Diese Sicherung stammt aus einer neueren App-Version (Schema " + schema + "). Aktualisiere zuerst die App." };
+  const neu = flatDays(d.months), alt = flatDays(S.months), r = { ok:true, schema, appVersion:d.appVersion || "", exported:d.exported || "", neu:[], geaendert:[], gleich:0, nurGeraet:[] };
+  for(const ds in neu){ if(!(ds in alt)) r.neu.push(ds); else if(canon(neu[ds]) !== canon(alt[ds])) r.geaendert.push(ds); else r.gleich++; }
+  for(const ds in alt) if(!(ds in neu)) r.nurGeraet.push(ds);
+  ["neu","geaendert","nurGeraet"].forEach(k => r[k].sort());
+  const ca = { ...DEF, ...d.cfg }, cb = S.cfg;
+  r.cfgDiff = [...new Set([...Object.keys(ca), ...Object.keys(cb)])].filter(k => canon(ca[k]) !== canon(cb[k])).map(k => CFG_NAME[k] || k);
+  r.requests = Array.isArray(d.requests) ? d.requests.length : null;
+  /* Saldo heute nach dem Übernehmen (zum Vergleich) */
+  const keep = { m:S.months, c:S.cfg };
+  try { r.saldoJetzt = saldoBis(todayISO()); S.months = d.months; S.cfg = ca; r.saldoDanach = saldoBis(todayISO()); } finally { S.months = keep.m; S.cfg = keep.c; }
+  r.data = d;
+  return r;
+}
+let IMP = null;
+const dlist = (arr, n) => arr.slice(0, n).map(ds => dmy(ds) + ds.slice(2,4)).join(", ") + (arr.length > n ? " …" : "");
+function renderImport(r){
+  const p = [];
+  const when = r.exported ? fullDate(r.exported) + ", " + new Date(r.exported).toTimeString().slice(0,5) + " Uhr" : "unbekannt";
+  p.push('<div>Sicherung vom <b>' + esc(when) + '</b>' + (r.appVersion ? " · Version " + esc(r.appVersion) : r.schema < SCHEMA ? " · ältere Version" : "") + '</div>');
+  if(!r.neu.length && !r.geaendert.length && !r.nurGeraet.length && !r.cfgDiff.length) p.push('<div class="ynote ok" style="margin:0">Keine Unterschiede – die Sicherung entspricht dem Stand auf diesem Gerät.</div>');
+  else {
+    p.push('<div><b>' + r.neu.length + '</b> ' + (r.neu.length === 1 ? "Tag" : "Tage") + ' neu · <b>' + r.geaendert.length + '</b> geändert · <b>' + r.gleich + '</b> unverändert</div>');
+    if(r.neu.length) p.push('<div>Neu: ' + esc(dlist(r.neu, 8)) + '</div>');
+    if(r.geaendert.length) p.push('<div>Geändert: ' + esc(dlist(r.geaendert, 8)) + '</div>');
+    if(r.nurGeraet.length) p.push('<div class="warn">' + r.nurGeraet.length + (r.nurGeraet.length === 1 ? " Tag gibt" : " Tage gibt") + ' es nur auf diesem Gerät (' + esc(dlist(r.nurGeraet, 6)) + '). „Übernehmen“ entfernt ' + (r.nurGeraet.length === 1 ? "ihn" : "sie") + ', „Zusammenführen“ behält ' + (r.nurGeraet.length === 1 ? "ihn" : "sie") + '.</div>');
+    if(r.cfgDiff.length) p.push('<div>Einstellungen weichen ab: ' + esc(r.cfgDiff.join(", ")) + '</div>');
+  }
+  if(r.requests != null) p.push('<div>Requests: <b>' + r.requests + '</b> in der Sicherung · <b>' + getReqs().length + '</b> auf diesem Gerät' + (r.nurGeraet.length ? " – Zusammenführen lässt die Requests des Geräts unverändert" : "") + '</div>');
+  p.push('<div>Saldo heute: jetzt <b>' + signed(r.saldoJetzt) + '</b> · danach <b>' + signed(r.saldoDanach) + '</b></div>');
+  $("impPrev").innerHTML = p.join("");
+  /* Gibt es Tage nur auf diesem Gerät, ist Zusammenführen die sichere Hauptaktion */
+  const keep = r.nurGeraet.length > 0;
+  $("impMerge").hidden = !keep;
+  $("impMerge").className = "btn primary"; $("impReplace").className = keep ? "btn" : "btn primary";
+  $("impReplace").textContent = keep ? "Übernehmen (Gerät ersetzen)" : "Übernehmen";
+  if(keep) $("impMerge").parentNode.insertBefore($("impMerge"), $("impReplace"));
+  else $("impReplace").parentNode.insertBefore($("impReplace"), $("impMerge"));
+}
+function savePreImport(){ try { const raw = localStorage.getItem("azb.local"); if(raw) localStorage.setItem("azb.pre-import", JSON.stringify({ saved:new Date().toISOString(), data:raw })); } catch(e){} }
+function applyImport(merge){
+  const r = IMP; if(!r) return; const d = r.data;
+  savePreImport();
+  if(merge){
+    /* Tage aus der Sicherung gewinnen, Tage nur auf diesem Gerät bleiben, Einstellungen bleiben wie auf diesem Gerät */
+    const m = JSON.parse(JSON.stringify(S.months));
+    for(const k in d.months){ m[k] = { ...(m[k] || {}) }; for(const ds in d.months[k]) m[k][ds] = d.months[k][ds]; }
+    S.months = m;
+  } else { S.months = d.months; S.cfg = { ...DEF, ...d.cfg }; }
+  persist();
+  if(!merge && typeof d.ideas === "string") setIdeas(d.ideas);   /* ältere Sicherungen ohne Ideen lassen die Notiz unverändert */
+  if(!merge && Array.isArray(d.requests)) setReqs(d.requests.filter(x => x && typeof x.t === "string"));   /* ältere Sicherungen ohne Requests lassen die Liste unverändert */
+  IMP = null; $("impDlg").close(); $("impUndo").hidden = false;
+  $("bakMsg").textContent = merge ? "Sicherung zusammengeführt." : "Sicherung übernommen."; toast($("bakMsg").textContent); render();
+}
 $("impFile").onchange = e => {
   const f = e.target.files && e.target.files[0]; if(!f) return;
-  const r = new FileReader();
-  r.onload = () => {
-    try {
-      const d = JSON.parse(r.result);
-      if(!d || typeof d.months !== "object" || typeof d.cfg !== "object") throw new Error("Format");
-      if(!confirm("Sicherung vom " + (d.exported||"?").slice(0,10) + " laden? Die aktuellen Daten auf diesem Gerät werden ersetzt.")) return;
-      S.months = d.months; S.cfg = { ...DEF, ...d.cfg };
-      ls.set("azb.local", { months:S.months, cfg:S.cfg });
-      if(typeof d.ideas === "string") setIdeas(d.ideas);   /* ältere Sicherungen ohne Ideen lassen die Notiz unverändert */
-      if(Array.isArray(d.requests)) setReqs(d.requests.filter(x => x && typeof x.t === "string"));   /* v2.7: ältere Sicherungen ohne Requests lassen die Liste unverändert */
-      $("bakMsg").textContent = "Sicherung geladen."; render();
-    } catch(err){ $("bakMsg").textContent = "Die Datei ist keine gültige Sicherung dieser App."; }
+  const rd = new FileReader();
+  rd.onload = () => {
     e.target.value = "";
+    const r = importAnalyse(String(rd.result));
+    if(!r.ok){ $("bakMsg").textContent = r.err; toast(r.err); return; }
+    IMP = r; renderImport(r); $("impDlg").showModal();
   };
-  r.readAsText(f);
+  rd.readAsText(f);
+};
+$("impReplace").onclick = () => applyImport(false);
+$("impMerge").onclick = () => applyImport(true);
+$("impCancel").onclick = () => { IMP = null; $("impDlg").close(); $("bakMsg").textContent = "Laden abgebrochen – nichts geändert."; };
+$("impDlg").addEventListener("cancel", () => { IMP = null; });
+$("impUndo").onclick = () => {
+  const pre = ls.get("azb.pre-import"); if(!pre || !pre.data) return;
+  if(!confirm("Stand vom " + fullDate(pre.saved) + " (vor dem letzten Laden) wiederherstellen? Einträge, die du seitdem gemacht hast, gehen verloren.")) return;
+  try { const d = JSON.parse(pre.data); S.months = d.months || {}; S.cfg = { ...DEF, ...(d.cfg||{}) }; persist(); $("bakMsg").textContent = "Stand vor dem letzten Laden wiederhergestellt."; render(); }
+  catch(err){ $("bakMsg").textContent = "Wiederherstellen nicht möglich."; }
 };
 
 /* ---------- v2.5: Sicherungs-Erinnerung (azb.lastBackup = Zeitpunkt der letzten JSON-Sicherung) ---------- */
@@ -1040,7 +1387,8 @@ function renderBackup(){
   const due = hasData && (age == null || age > BACKUP_DAYS);
   $("setDot").hidden = !due;
   $("bakRemind").hidden = !due;
-  if(due) $("bakRemind").textContent = age == null ? "Noch keine Sicherung gespeichert – speichere jetzt eine." : "Letzte Sicherung vor " + age + " Tagen – Zeit für eine neue.";
+  if(due) $("bakRemind").innerHTML = esc(age == null ? "Noch keine Sicherung gespeichert – speichere jetzt eine." : "Letzte Sicherung vor " + age + " Tagen – Zeit für eine neue.") +
+    '<button class="btn primary bakgo" id="bakGo">Jetzt sichern</button>';
   const t = ls.get("azb.lastBackup");
   $("bakLast").textContent = t ? "Letzte Sicherung: " + dmy(iso(new Date(t))) + new Date(t).getFullYear() + (age === 0 ? " (heute)" : age === 1 ? " (gestern)" : " (vor " + age + " Tagen)") : "";
   $("bakLast").hidden = !t;
@@ -1175,6 +1523,19 @@ function renderRange(){
       if(total > tazMax()) p.push('<div class="warn">Damit wären es ' + total + ' TAZ in ' + y + ' – erlaubt sind ' + tazMax() + '. Was darüber liegt, zählt nur als Gleitzeit.</div>');
       else p.push('<div>Danach: <b>' + total + '</b> von ' + tazMax() + ' TAZ in ' + y + '.</div>');
     }
+    /* v3.0: Urlaubskontingent je betroffenem Jahr (mit Übergang über den Jahreswechsel) */
+    if(R.art === "Urlaub" && r.set.length){
+      const add = r.set.filter(inRange), years = [...new Set(add.map(d => d.slice(0,4)))];
+      years.forEach(y0 => { const py = String(+y0 - 1); if(!years.includes(py) && urlCalc(add).res[py]) years.unshift(py); });
+      [...new Set(years)].sort().forEach(y => {
+        const u = urlaubJahr(y, add), before = urlaubJahr(y);
+        if(u.genommen + u.geplant + u.uebertragOut === before.genommen + before.geplant + before.uebertragOut && u.uebertragIn === before.uebertragIn) return;
+        const tot = u.genommen + u.geplant + u.uebertragOut;
+        if(u.ueber) p.push('<div class="warn">Damit wären es ' + tot + ' Urlaubstage für ' + y + ' – Anspruch sind ' + u.anspruch + '.</div>');
+        else p.push('<div>Danach in ' + y + ': <b>' + (u.genommen + u.geplant) + '</b> von ' + u.anspruch + ' Urlaubstagen' + (u.uebertragOut ? ', ' + u.uebertragOut + ' übertragen' : '') + ' · Rest <b>' + u.rest + '</b>.</div>');
+        if(u.uebertragOut > before.uebertragOut) p.push('<div>' + u.uebertragOut + (u.uebertragOut === 1 ? " Resttag wird" : " Resttage werden") + ' nach ' + (+y + 1) + ' übertragen – zusammenhängender Urlaub über den Jahreswechsel.</div>');
+      });
+    }
   }
   $("rPreview").innerHTML = p.join("");
   $("rOk").disabled = !r.ok;
@@ -1243,7 +1604,7 @@ let toastT = null;
 function toast(t){ const el = $("toast"); el.textContent = t; el.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { el.hidden = true; }, 3200); }
 
 /* neueste Sicherheitskopie zuerst */
-const PRE_KEYS = ["azb.pre-v2.7", "azb.pre-v2.5", "azb.pre-v2.1", "azb.pre-v2"];
+const PRE_KEYS = ["azb.pre-v3.0", "azb.pre-v2.7", "azb.pre-v2.5", "azb.pre-v2.1", "azb.pre-v2"];
 $("preBtn").onclick = () => {
   const key = PRE_KEYS.find(k => ls.get(k)), pre = key && ls.get(key); if(!pre || !pre.data) return;
   if(!confirm("Stand vom " + String(pre.saved||"?").slice(0,10) + " (vor dem Update) wiederherstellen? Einträge, die du seitdem gemacht hast, gehen verloren.")) return;
@@ -1277,15 +1638,22 @@ render();
     if(raw && !localStorage.getItem("azb.pre-v2.5")) localStorage.setItem("azb.pre-v2.5", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
     /* v2.7: gleiche Sicherheitskopie für den Stand vor Version 2.7 */
     if(raw && !localStorage.getItem("azb.pre-v2.7")) localStorage.setItem("azb.pre-v2.7", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
+    /* v3.0: gleiche Sicherheitskopie für den Stand vor Version 3.0 */
+    if(raw && !localStorage.getItem("azb.pre-v3.0")) localStorage.setItem("azb.pre-v3.0", JSON.stringify({ saved:new Date().toISOString(), data:raw }));
+    /* v3.0: Schema-Version (eigener Schlüssel, azb.local bleibt unverändert). Wird nur erhöht, nie gesenkt. */
+    if(!(parseInt(localStorage.getItem("azb.schema"), 10) >= SCHEMA)) localStorage.setItem("azb.schema", String(SCHEMA));
   } catch(e){}
   const loc = ls.get("azb.local") || FIRST_RUN;
   S.months = loc.months || {}; S.cfg = { ...DEF, ...(loc.cfg||{}) };
   ls.set("azb.local", { months:S.months, cfg:S.cfg });
   S.mode = "local";
-  try { $("preBtn").hidden = !PRE_KEYS.some(k => localStorage.getItem(k)); } catch(e){}
+  try { $("preBtn").hidden = !PRE_KEYS.some(k => localStorage.getItem(k)); $("impUndo").hidden = !localStorage.getItem("azb.pre-import"); } catch(e){}
   try { if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch(e){}
   render();
 })();
+/* v3.0: Schnittstelle nur für den automatischen Regressionstest (tests/regression.mjs) */
+if(window.__AZB_TEST__) window.__azbTest = { urlaubJahr: y => urlaubJahr(y), jahrDaten: y => { const j = jahrDaten(y); return JSON.parse(JSON.stringify(j)); },
+  setJahr: y => { Y.year = y; renderJahr(); }, backupText, importVorschau: t => { const r = importAnalyse(t); delete r.data; return r; } };
 if("serviceWorker" in navigator){ window.addEventListener("load", () => { navigator.serviceWorker.register("sw.js").catch(() => {}); }); }
 })();
 </script>

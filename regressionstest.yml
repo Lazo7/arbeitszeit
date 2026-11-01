@@ -1,0 +1,22 @@
+# Arbeitszeit-App: automatischer Regressionstest (seit v3.0)
+# Läuft bei jedem Upload (Push) und lässt sich unter „Actions“ auch von Hand starten.
+# Prüft Saldo, TAZ, Tageswerte, Monatsköpfe, Wochensummen, Verlauf, CSV und die v3-Teile
+# gegen den Referenzdatensatz in tests/. Die App selbst nutzt keine Fremdbibliothek –
+# jsdom wird nur hier im Test installiert.
+name: Regressionstest
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm install --no-save --no-audit --no-fund jsdom@26.1.0
+      - run: node tests/regression.mjs
